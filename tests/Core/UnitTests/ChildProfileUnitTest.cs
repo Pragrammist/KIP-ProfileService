@@ -13,16 +13,15 @@ public class ChildProfileUnitTest
     [Trait("Category", "ChildProfile")]
     public void AgeLogic(int age, int expected)
     {
-        ChildProfile profile = new ChildProfile();
+        ChildProfile profile = new ChildProfile("id", age);
         
-        profile.Age = age;
-
         profile.Age.Should().Be(expected);
     }
 
     [Fact]
     public void GenderDefaultValue(){
-        ChildProfile profile = new ChildProfile();
+        ChildProfile profile = new ChildProfile("id", 0);
+        
         profile.Gender.Should().Be(Gender.MALE);
     }
 }

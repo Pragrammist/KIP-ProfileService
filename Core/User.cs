@@ -8,6 +8,15 @@ namespace ProfileService.Core;
 
 public class User
 {
+
+    private User(){}
+    public User(string id, string login, string email, string password)
+    {
+        Id = id;
+        Login = login;
+        Email = email;
+        Password = password;
+    }
     public string Id { get; set; } = null!;
     public string Login { get; set; } = null!;
     public string Email { get; set; } = null!;
@@ -17,62 +26,65 @@ public class User
 }
 public class Profile
 {    
-    IList<ProfileAndFilm>? _willWatchTables;
-    IList<ProfileAndFilm>? _scoredTables;
-    IList<ProfileAndFilm>? _watchedTables;
+
+    
+    IList<ProfileAndFilm> _willWatchTables = new List<ProfileAndFilm>();
+    IList<ProfileAndFilm> _scoredTables = new List<ProfileAndFilm>();
+    IList<ProfileAndFilm> _watchedTables= new List<ProfileAndFilm>();
+    IList<ChildProfile> _childs = new List<ChildProfile>();
+
 
     WillWatch? _willWatch;
 
     Scored? _scored;
 
+
     Watched? _watched;
+
+    public Profile(string id, User user)
+    {
+        Id = id;
+        User = user;
+    }
+    private Profile(){}
 
     public string Id {get; set;} = null!;
 
+
     public User User {get; set;} = null!;
 
-    public bool HasChilds => Childs is not null && Childs.Count > 0;
-    
-    public bool HasScored => _scored is not null && _scored.Count > 0;
 
-    public bool HasWatched => _watched is not null && _watched.Count > 0;
+    public IList<ChildProfile> Childs {  get => _childs; }
 
-    public IList<ChildProfile>? Childs {get; private set;}
 
-    public WillWatch? WillWatch { get {
+    public WillWatch WillWatch { get {
         if(_willWatch != null)
             return _willWatch;
-            
-        else if(_willWatchTables != null && _willWatch == null){
+        else{  
             _willWatch = new WillWatch(Id, _willWatchTables);
             return _willWatch;
         }
-        else
-            return null; 
     } }
     
-    public Scored? Scored { get{
+
+    public Scored Scored { get{
         if(_scored != null)
             return _scored;
-            
-        else if(_scoredTables != null && _scored == null){
+        else{
             _scored = new Scored(Id, _scoredTables);
             return _scored;
         }
-        else
-            return null;
     } }
 
-    public Watched? Watched { get{
+
+    public Watched Watched { get{
         if(_watched != null)
             return _watched;
             
-        else if(_watchedTables != null && _watched == null){
+        else{
             _watched = new Watched(Id, _watchedTables);
             return _watched;
         }
-        else
-            return null;
     } }
 }
 
@@ -83,6 +95,13 @@ public enum Gender {
 
 public class ChildProfile
 {
+    private ChildProfile(){}
+    public ChildProfile(string id, int age, Gender gender = default)
+    {
+        Age = age;
+        Id = id;
+        Gender = gender;
+    }
     int _age;
     public string Id {get; set;} = null!;
     public int Age {get => _age; set{
@@ -119,6 +138,18 @@ public record class ProfileAndFilm
 }
 
 
+public class FavouriteFilmAlreadyExistsException : Exception{
+    public FavouriteFilmAlreadyExistsException(object value) : base($"{value} already in favourite"){
+        
+    }
+}
+public class IndexOutOfRangeFavouriteException : Exception
+{
+    public IndexOutOfRangeFavouriteException(int index, int count) : base($"{index} >= {count}"){
+
+    }
+}
+
 public abstract class FavouriteBase : IList<string>, IEnumerable<string>
 {
     protected readonly IList<ProfileAndFilm> _films = null!;
@@ -131,18 +162,18 @@ public abstract class FavouriteBase : IList<string>, IEnumerable<string>
     protected FavouriteBase(string profileId, IList<ProfileAndFilm> films){
         _films = films;
     }
-    public string this[int index] { get => _films[index].FilmID; set => throw new NotSupportedException($"TODO:{typeof(WillWatch)}"); }
+    public string this[int index] { get => _films[index].FilmID; set => Insert(index, value);}
 
     public int Count => _films.Count;
 
     public bool IsReadOnly => false;
 
-    private ProfileAndFilm CreateFilmItem(string filmId) => new ProfileAndFilm(_profileId, filmId);
+    private ProfileAndFilm CreateFilmItem(string filmId) => new ProfileAndFilm(filmId, _profileId);
 
     private void AddFilmValidation(string filmId)
     {
         if(_films.FirstOrDefault(t => t.FilmID == filmId) != null)
-            throw new InvalidOperationException($"TODO:{typeof(WillWatch)}");
+            throw new FavouriteFilmAlreadyExistsException(filmId); 
     }
 
     public void Add(string filmId)
@@ -157,19 +188,13 @@ public abstract class FavouriteBase : IList<string>, IEnumerable<string>
     public bool Contains(string filmId) => _films.FirstOrDefault(t => t.FilmID == filmId) is not null;
     
 
-    public void CopyTo(string[] array, int arrayIndex) 
-    {
-        var items = new ProfileAndFilm[]{};
-        _films.CopyTo(items, arrayIndex);
-        array = items.Select(t => t.FilmID).ToArray();
-    }
+    public void CopyTo(string[] array, int arrayIndex) => throw new NotImplementedException("FUCK YOU MICROSOFT");
+    
+        
+    
     
    
-    public IEnumerator<string> GetEnumerator() {
-        
-        foreach (var film in _films)
-            yield return film.FilmID;
-    }
+    public IEnumerator<string> GetEnumerator() => _films.Select(t => t.FilmID).GetEnumerator();
     
 
     public int IndexOf(string filmId)
@@ -181,7 +206,13 @@ public abstract class FavouriteBase : IList<string>, IEnumerable<string>
         return -1;
     }
 
-    public void Insert(int index, string filmId) => throw new NotSupportedException();
+    public void Insert(int index, string filmId){
+        AddFilmValidation(filmId);
+        if(index >= Count)
+            throw new IndexOutOfRangeFavouriteException(index, Count);
+
+        _films[index] = CreateFilmItem(filmId);
+    }
     
 
     public bool Remove(string filmId) => _films.Remove(CreateFilmItem(filmId));
@@ -190,11 +221,7 @@ public abstract class FavouriteBase : IList<string>, IEnumerable<string>
     public void RemoveAt(int index) => _films.RemoveAt(index);
     
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        foreach (var film in _films)
-            yield return film.FilmID;
-    }
+    IEnumerator IEnumerable.GetEnumerator() => _films.Select(t => t.FilmID).GetEnumerator();
 }
 
 
