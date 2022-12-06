@@ -1,6 +1,7 @@
 using Xunit;
 using System.Threading.Tasks;
 using FluentAssertions;
+using System.Net.Http.Json;
 
 namespace IntegrationTests;
 
@@ -10,14 +11,22 @@ public class ChildWebTest : WebFixture
     [Fact]
     public async Task Get()
     {
-        var responseMessage = await _client.GetAsync(url);
+        var requestArg = "?profileId=someid";
+        var responseMessage = await _client.GetAsync(url + requestArg);
 
         responseMessage.IsSuccessStatusCode.Should().BeTrue();
     }
+
     [Fact]   
     public async Task Post()
     {
-        var responseMessage = await _client.PostAsync(url, null);
+        var child = new {
+            ProfileId ="someprofileid",
+            Age = 12,
+            Name = "name",
+            Gender = "mail"
+        };
+        var responseMessage = await _client.PostAsJsonAsync(url, child);
 
         responseMessage.IsSuccessStatusCode.Should().BeTrue();
     }

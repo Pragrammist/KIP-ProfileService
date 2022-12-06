@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Appservices.CreateProfileDtos;
+using Appservices.OutputDtos;
 
 namespace Web.Controllers;
 
@@ -13,15 +15,35 @@ public class ProfileController : ControllerBase
     //сделать все отдельными контроллерами, но сделать создание профиля, 
     //в которое принимается все возоможные данные профиля, но для остального сделать чтобы каждый отвечал за свое
     [HttpPost]
-    public object Post()
+    public ProfileDto Post(CreateProfileDto input)
     {
-        return "post";
+        return new ProfileDto 
+        {
+            Id = "generatedid",
+            User = new UserDto{
+                CreatedAt = input.CreatedAt,
+                Email = input.Email,
+                Id = input.UserId, 
+                Login = input.Login,
+                Password = input.Password,                
+            }            
+        };
     }
 
     [HttpGet]
-    public object Get()
+    public ProfileDto Get(string id)
     {
-        return "get";
+        return new ProfileDto 
+        {
+            Id = "generatedid",
+            User = new UserDto{
+                CreatedAt = DateTime.Now,
+                Email = "input.Email",
+                Id = "input.Id", 
+                Login = "input.Login",
+                Password = "input.Password",                
+            }            
+        };
     }
 
     [HttpPut]

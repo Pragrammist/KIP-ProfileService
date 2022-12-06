@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Appservices.CreateChildProfileDtos;
+using Appservices.OutputDtos;
 
 namespace Web.Controllers;
 
@@ -7,15 +9,41 @@ namespace Web.Controllers;
 public class ChildController : ControllerBase
 {
     [HttpPost]
-    public object Post()
+    public ChildProfile Post(CreateChildProfile child)
     {
-        return "post";
+        return new ChildProfile{
+            Age = child.Age,
+            Gender = child.Gender,
+            Name = child.Name,
+            Id = child.ProfileId
+        };
     }
 
     [HttpGet]
-    public object Get()
+    public IEnumerable<ChildProfile> Get(string profileId)
     {
-        return "get";
+        return new []{
+            new ChildProfile {
+                Age = 12,
+                Gender = "mail",
+                Name = "name"
+            },
+            new ChildProfile {
+                Age = 12,
+                Gender = "mail",
+                Name = "name"
+            },
+            new ChildProfile {
+                Age = 12,
+                Gender = "mail",
+                Name = "name"
+            },
+            new ChildProfile {
+                Age = 12,
+                Gender = "mail",
+                Name = "name"
+            }
+        };
     }
 
     [HttpPut]

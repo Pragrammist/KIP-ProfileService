@@ -3,11 +3,12 @@ namespace ProfileService.Core;
 public class ChildProfile
 {
     private ChildProfile(){}
-    public ChildProfile(string id, int age, Gender gender = default)
+    public ChildProfile(string id, int age, string name,Gender gender = default)
     {
         Age = age;
         Id = id;
         Gender = gender;
+        Name = name;
     }
     int _age;
     public string Id {get; set;} = null!;
@@ -28,4 +29,5 @@ public class ChildProfile
         }
     }} 
     public Gender Gender {get; set;}
+    public string Name {get; set;} = null!;
 }
