@@ -40,7 +40,8 @@ public class ChildWebTest : WebFixture
     [Fact]
     public async Task Delete()
     {
-        var responseMessage = await _client.DeleteAsync(url);
+        var requestArg = "?id=someid";
+        var responseMessage = await _client.DeleteAsync(url + requestArg);
 
         responseMessage.IsSuccessStatusCode.Should().BeTrue();
     }

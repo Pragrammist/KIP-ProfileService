@@ -8,6 +8,10 @@ namespace Web.Controllers;
 [Route("[controller]")]
 public class ChildController : ControllerBase
 {
+
+    ///<summary>
+    /// добавление детского профиля в сущетсвующий взрослый профиль 
+    ///</summary>
     [HttpPost]
     public ChildProfile Post(CreateChildProfile child)
     {
@@ -19,6 +23,9 @@ public class ChildController : ControllerBase
         };
     }
 
+    ///<summary>
+    /// полученение списка детский профилей по id взрослого профиляы
+    ///</summary>
     [HttpGet]
     public IEnumerable<ChildProfile> Get(string profileId)
     {
@@ -46,13 +53,20 @@ public class ChildController : ControllerBase
         };
     }
 
+    ///<summary>
+    /// не работает для на будущего
+    /// для изменения детского профиля
+    ///</summary>
     [HttpPut]
     public object Put(){
         return "put";
     }
 
+    ///<summary>
+    /// удаление детского профиля по его id
+    ///</summary>
     [HttpDelete]
-    public object Delete(){
-        return "delete";
+    public object Delete(string id){
+        return "deleted " + id;
     }
 }
