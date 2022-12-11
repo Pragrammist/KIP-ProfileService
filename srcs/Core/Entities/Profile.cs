@@ -2,18 +2,12 @@ namespace ProfileService.Core;
 
 public class Profile
 {    
-    IList<string> _willWatchTables = new List<string>();
-    IList<string> _scoredTables = new List<string>();
-    IList<string> _watchedTables= new List<string>();
-    IList<ChildProfile> _childs = new List<ChildProfile>();
+    IList<string> _willWatch = new WillWatch(); 
+    IList<string> _scored = new Scored();
+    IList<string> _watched = new Watched();
+    IList<ChildProfile> _childs = new Childern();
 
-
-    WillWatch? _willWatch;
-
-    Scored? _scored;
-
-
-    Watched? _watched;
+    
     public Profile(User user)
     {
         User = user;
@@ -25,42 +19,20 @@ public class Profile
     }
     private Profile(){}
 
-    public string Id {get; set;} = null!;
+    public string Id { get; set;} = null!;
 
 
-    public User User {get; set;} = null!;
+    public User User { get; set;} = null!;
 
 
-    public IList<ChildProfile> Childs {  get => _childs; }
+    public IList<ChildProfile> Childs {  get => _childs; set => _childs = new Childern(value); }
 
 
-    public WillWatch WillWatch { get {
-        if(_willWatch != null)
-            return _willWatch;
-        else{  
-            _willWatch = new WillWatch(_willWatchTables);
-            return _willWatch;
-        }
-    } }
+    public IList<string> WillWatch { get => _willWatch; set => _willWatch = new WillWatch(value);}
     
 
-    public Scored Scored { get{
-        if(_scored != null)
-            return _scored;
-        else{
-            _scored = new Scored(_scoredTables);
-            return _scored;
-        }
-    } }
+    public IList<string> Scored { get => _scored; set => _scored = new Scored(value);}
 
 
-    public Watched Watched { get{
-        if(_watched != null)
-            return _watched;
-            
-        else{
-            _watched = new Watched(_watchedTables);
-            return _watched;
-        }
-    } }
+    public IList<string> Watched { get => _watched; set => _watched = new Watched(value); }
 }

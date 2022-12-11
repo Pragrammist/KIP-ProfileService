@@ -24,7 +24,7 @@ public class ChildWebTest : WebFixture
             ProfileId ="someprofileid",
             Age = 12,
             Name = "name",
-            Gender = "mail"
+            Gender = 0
         };
         var responseMessage = await _client.PostAsJsonAsync(url, child);
 

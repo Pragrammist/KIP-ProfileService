@@ -1,6 +1,6 @@
 namespace Appservices.OutputDtos;
 
-public class ChildProfile
+public class ChildProfileDto
 {
     public string Id { get; set; } = null!;
     public int Age { get; set; } 

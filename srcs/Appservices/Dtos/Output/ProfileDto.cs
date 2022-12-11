@@ -6,7 +6,7 @@ public class ProfileDto
 
     public UserDto User {get; set;} = null!;
 
-    public IList<ChildProfile> Childs {get; set;} = new List<ChildProfile>();
+    public IList<ChildProfileDto> Childs {get; set;} = new List<ChildProfileDto>();
 
     public IList<string> Watched {get; set;} = new List<string>();
 

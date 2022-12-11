@@ -13,11 +13,11 @@ public class ChildController : ControllerBase
     /// добавление детского профиля в сущетсвующий взрослый профиль 
     ///</summary>
     [HttpPost]
-    public ChildProfile Post(CreateChildProfile child)
+    public ChildProfileDto Post(CreateChildProfileDto child)
     {
-        return new ChildProfile{
+        return new ChildProfileDto{
             Age = child.Age,
-            Gender = child.Gender,
+            Gender = child.Gender.ToString(),
             Name = child.Name,
             Id = child.ProfileId
         };
@@ -27,25 +27,25 @@ public class ChildController : ControllerBase
     /// полученение списка детский профилей по id взрослого профиляы
     ///</summary>
     [HttpGet]
-    public IEnumerable<ChildProfile> Get(string profileId)
+    public IEnumerable<ChildProfileDto> Get(string profileId)
     {
         return new []{
-            new ChildProfile {
+            new ChildProfileDto {
                 Age = 12,
                 Gender = "mail",
                 Name = "name"
             },
-            new ChildProfile {
+            new ChildProfileDto {
                 Age = 12,
                 Gender = "mail",
                 Name = "name"
             },
-            new ChildProfile {
+            new ChildProfileDto {
                 Age = 12,
                 Gender = "mail",
                 Name = "name"
             },
-            new ChildProfile {
+            new ChildProfileDto {
                 Age = 12,
                 Gender = "mail",
                 Name = "name"

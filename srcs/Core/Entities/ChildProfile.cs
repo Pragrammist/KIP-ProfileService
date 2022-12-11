@@ -10,7 +10,7 @@ public class ChildProfile
         Name = name;
     }
     int _age;    
-    public int Age {get => _age; set{
+    public int Age { get => _age; set{
         switch(value){
             case < 6:
                 _age = 0;
@@ -27,5 +27,5 @@ public class ChildProfile
         }
     }} 
     public Gender Gender { get; set; }
-    public string Name {get; set;} = null!;
+    public string Name { get; set;} = null!;
 }
