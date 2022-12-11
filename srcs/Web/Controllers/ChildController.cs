@@ -53,20 +53,12 @@ public class ChildController : ControllerBase
         };
     }
 
-    ///<summary>
-    /// не работает для на будущего
-    /// для изменения детского профиля
-    ///</summary>
-    [HttpPut]
-    public object Put(){
-        return "put";
-    }
 
     ///<summary>
     /// удаление детского профиля по его id
     ///</summary>
     [HttpDelete]
-    public object Delete(string id){
-        return "deleted " + id;
+    public object Delete(string profileId, string name){
+        return "deleted " + profileId;
     }
 }

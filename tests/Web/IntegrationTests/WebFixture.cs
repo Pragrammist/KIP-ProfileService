@@ -6,7 +6,7 @@ using System;
 
 namespace IntegrationTests;
 
-public class WebFixture : WebApplicationFactory<Program>, IDisposable, IClassFixture<WebFixture> 
+public class WebFixture : WebApplicationFactory<Program>, IDisposable
 {
     
     protected HttpClient _client;

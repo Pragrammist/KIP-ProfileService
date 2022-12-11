@@ -33,18 +33,4 @@ public class ProfileWebTest : WebFixture
 
         responseMessage.IsSuccessStatusCode.Should().BeTrue();
     }
-    [Fact]
-    public async Task Put()
-    {
-        var responseMessage = await _client.PutAsync(url, null);
-
-        responseMessage.IsSuccessStatusCode.Should().BeTrue();
-    }
-    [Fact]
-    public async Task Delete()
-    {
-        var responseMessage = await _client.DeleteAsync(url);
-
-        responseMessage.IsSuccessStatusCode.Should().BeTrue();
-    }
 }

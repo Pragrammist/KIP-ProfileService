@@ -71,22 +71,6 @@ public class ProfileController : ControllerBase
         return profile;
     }
 
-    /// <summary>
-    /// Не работает сделан, чтобы просто был на будущее. 
-    /// Этот метод будет для изменения каких-то данных в профиля
-    /// </summary>
-    [HttpPut]
-    public object Put(){
-        return "put";
-    }
-
-    /// <summary>
-    /// Не работает сделан, чтобы просто был на будущее.
-    /// Нужно ли делать удаление профиля, хоть и для админки полезно будет, но только нужно ли это
-    /// </summary>
-    [HttpDelete]
-    public object Delete(){
-        return "delete";
-    }
+    
 
 }

@@ -30,17 +30,11 @@ public class ChildWebTest : WebFixture
 
         responseMessage.IsSuccessStatusCode.Should().BeTrue();
     }
-    [Fact]
-    public async Task Put()
-    {
-        var responseMessage = await _client.PutAsync(url, null);
 
-        responseMessage.IsSuccessStatusCode.Should().BeTrue();
-    }
     [Fact]
     public async Task Delete()
     {
-        var requestArg = "?id=someid";
+        var requestArg = "?profileId=someid&name=somename";
         var responseMessage = await _client.DeleteAsync(url + requestArg);
 
         responseMessage.IsSuccessStatusCode.Should().BeTrue();
