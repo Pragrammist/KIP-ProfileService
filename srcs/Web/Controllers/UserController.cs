@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 
+
+
 namespace Web.Controllers;
 
 [ApiController]
 [Route("[controller]")]
 public class UserController : ControllerBase
 {
+   
     ///<summary>
     /// не работает. зна будущее
     /// вдруг нужно будет создать пользователя без создания объекта профиля
@@ -13,9 +16,12 @@ public class UserController : ControllerBase
     [HttpPost]
     public object Post()
     {
+        
+
         return "post";
     }
-
+    
+    
     ///<summary>
     /// не работает. на будущее
     ///</summary>

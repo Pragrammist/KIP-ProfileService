@@ -1,17 +1,41 @@
 using System.Reflection;
+using Serilog;
+using Appservices.OutputDtos;
+
 
 namespace Web;
 
 public class Program{
 
+    
     public static void Main(string[] args)
     {
-        var builder = WebApplication.CreateBuilder(args);
+        try{
+            AppBuild(args);
+        }
+        catch(Exception ex){
+            Log.Fatal(ex, "Application terminated unexpectedly");
+        }
+        finally{
+            Log.CloseAndFlush();
+        }
 
-        // Add services to the container.
+    }
+    static void AppBuild(string[] args){
+        var builder = WebApplication.CreateBuilder(args);
+        
+        //var configuration = builder.Configuration;
+        //var logstashUrl = configuration["LOGSTASH_URL"]; //http://localhost:8080
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.Console()
+            .WriteTo.Http("http://localhost:8080", queueLimitBytes: null)
+            .CreateLogger();
+        
+
+        builder.Host.UseSerilog();
 
         builder.Services.AddControllers();
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(options => {
             var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -20,10 +44,10 @@ public class Program{
 
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
+        
         if (app.Environment.IsDevelopment())
         {
-            //    
+            //
         }
 
         app.UseSwagger();
@@ -31,7 +55,6 @@ public class Program{
             options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
             options.RoutePrefix = string.Empty;
         });
-        app.UseHttpsRedirection();
 
         app.UseAuthorization();
 

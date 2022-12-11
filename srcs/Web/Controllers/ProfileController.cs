@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Appservices.CreateProfileDtos;
 using Appservices.OutputDtos;
+using Serilog;
 
 namespace Web.Controllers;
 
@@ -54,7 +55,7 @@ public class ProfileController : ControllerBase
     [HttpGet]
     public ProfileDto Get(string id)
     {
-        return new ProfileDto 
+        var profile = new ProfileDto 
         {
             Id = "generatedid",
             User = new UserDto
@@ -66,6 +67,8 @@ public class ProfileController : ControllerBase
                 Password = "input.Password",
             }            
         };
+        Log.Information("FUCKING PROFILE IS {@0}", profile);
+        return profile;
     }
 
     /// <summary>

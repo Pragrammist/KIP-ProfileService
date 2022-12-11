@@ -9,7 +9,7 @@ public class FavouriteUnitTest
 {
     [Fact]
     public void Add(){
-        WillWatch w = new WillWatch("someId");
+        WillWatch w = new WillWatch();
 
         w.Add("qwe");
 
@@ -18,7 +18,7 @@ public class FavouriteUnitTest
 
     [Fact]
     public void AddException(){
-        WillWatch w = new WillWatch("someId");
+        WillWatch w = new WillWatch();
         w.Add("qwe");
 
 
@@ -32,7 +32,7 @@ public class FavouriteUnitTest
 
     [Fact]
     public void Remove(){
-        WillWatch w = new WillWatch("someId");
+        WillWatch w = new WillWatch();
 
         w.Add("qwe");
         w.Remove("qwe");
@@ -42,7 +42,7 @@ public class FavouriteUnitTest
 
     [Fact]
     public void RemoveAt(){
-        WillWatch w = new WillWatch("someId");
+        WillWatch w = new WillWatch();
 
         w.Add("qwe");
         w.RemoveAt(0);
@@ -53,7 +53,7 @@ public class FavouriteUnitTest
    
     [Fact]
     public void Insert(){
-        WillWatch w = new WillWatch("someId");
+        WillWatch w = new WillWatch();
 
         w.Add("qwe");
         w[0] = "qwe2";
@@ -63,7 +63,7 @@ public class FavouriteUnitTest
 
     [Fact]
     public void InsertOutrangeException(){
-        WillWatch w = new WillWatch("someId");
+        WillWatch w = new WillWatch();
 
         w.Add("qwe");
 
@@ -73,7 +73,7 @@ public class FavouriteUnitTest
     }
     [Fact]
     public void InsertAlreadyExistsException(){
-        WillWatch w = new WillWatch("someId");
+        WillWatch w = new WillWatch();
 
         w.Add("qwe");
         
@@ -86,7 +86,7 @@ public class FavouriteUnitTest
     [InlineData("qwe", 0)]
     [InlineData("qwe2", -1)]
     public void IndexOf(string value, int expectedIndex){
-        WillWatch w = new WillWatch("someId");
+        WillWatch w = new WillWatch();
 
         w.Add("qwe");
         
@@ -95,7 +95,7 @@ public class FavouriteUnitTest
 
     [Fact]
     public void EnumarableTest(){
-        WillWatch w = new WillWatch("someId");
+        WillWatch w = new WillWatch();
 
         w.Add("qwe");
 

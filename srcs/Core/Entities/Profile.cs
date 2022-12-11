@@ -2,11 +2,9 @@ namespace ProfileService.Core;
 
 public class Profile
 {    
-
-    
-    IList<ProfileAndFilm> _willWatchTables = new List<ProfileAndFilm>();
-    IList<ProfileAndFilm> _scoredTables = new List<ProfileAndFilm>();
-    IList<ProfileAndFilm> _watchedTables= new List<ProfileAndFilm>();
+    IList<string> _willWatchTables = new List<string>();
+    IList<string> _scoredTables = new List<string>();
+    IList<string> _watchedTables= new List<string>();
     IList<ChildProfile> _childs = new List<ChildProfile>();
 
 
@@ -16,7 +14,10 @@ public class Profile
 
 
     Watched? _watched;
-
+    public Profile(User user)
+    {
+        User = user;
+    }
     public Profile(string id, User user)
     {
         Id = id;
@@ -37,7 +38,7 @@ public class Profile
         if(_willWatch != null)
             return _willWatch;
         else{  
-            _willWatch = new WillWatch(Id, _willWatchTables);
+            _willWatch = new WillWatch(_willWatchTables);
             return _willWatch;
         }
     } }
@@ -47,7 +48,7 @@ public class Profile
         if(_scored != null)
             return _scored;
         else{
-            _scored = new Scored(Id, _scoredTables);
+            _scored = new Scored(_scoredTables);
             return _scored;
         }
     } }
@@ -58,7 +59,7 @@ public class Profile
             return _watched;
             
         else{
-            _watched = new Watched(Id, _watchedTables);
+            _watched = new Watched(_watchedTables);
             return _watched;
         }
     } }

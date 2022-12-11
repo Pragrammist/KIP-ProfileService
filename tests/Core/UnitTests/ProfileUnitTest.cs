@@ -18,8 +18,8 @@ public class ProfileUnitTest{
 
     [Fact]
     public void TestChilds(){
-        Profile profile = new Profile("ID", new User("ID", "LOGIN", "EMAIL", "PASSWORD"));
-        var childProfile = new ChildProfile("e", 0, "name");
+        Profile profile = new Profile("ID", new User("LOGIN", "EMAIL", "PASSWORD"));
+        var childProfile = new ChildProfile(0, "name");
 
         profile.Childs.Add(childProfile);
 
@@ -27,8 +27,8 @@ public class ProfileUnitTest{
     }
 
     public static IEnumerable<object[]> ProfileFavouriteData(){
-        Profile profile = new Profile("ID", new User("ID", "LOGIN", "EMAIL", "PASSWORD"));
-        var childProfile = new ChildProfile("e", 0, "name");
+        Profile profile = new Profile("ID", new User("LOGIN", "EMAIL", "PASSWORD"));
+        var childProfile = new ChildProfile(0, "name");
 
         yield return new object[]{profile.Scored};
         yield return new object[]{profile.Watched};
