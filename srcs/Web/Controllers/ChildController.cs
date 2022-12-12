@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Appservices.CreateChildProfileDtos;
 using Appservices.OutputDtos;
+using Appservices;
 
 namespace Web.Controllers;
 
@@ -9,56 +10,25 @@ namespace Web.Controllers;
 public class ChildController : ControllerBase
 {
 
+    ProfileInteractor _profile;
+    public ChildController(ProfileInteractor profile){
+        _profile = profile;
+    }
     ///<summary>
     /// добавление детского профиля в сущетсвующий взрослый профиль 
     ///</summary>
     [HttpPost]
-    public ChildProfileDto Post(CreateChildProfileDto child)
-    {
-        return new ChildProfileDto{
-            Age = child.Age,
-            Gender = child.Gender.ToString(),
-            Name = child.Name,
-            Id = child.ProfileId
-        };
+    public async Task <bool> Post(CreateChildProfileDto child){
+        return await _profile.AddChildProfile(child);
     }
 
-    ///<summary>
-    /// полученение списка детский профилей по id взрослого профиляы
-    ///</summary>
-    [HttpGet]
-    public IEnumerable<ChildProfileDto> Get(string profileId)
-    {
-        return new []{
-            new ChildProfileDto {
-                Age = 12,
-                Gender = "mail",
-                Name = "name"
-            },
-            new ChildProfileDto {
-                Age = 12,
-                Gender = "mail",
-                Name = "name"
-            },
-            new ChildProfileDto {
-                Age = 12,
-                Gender = "mail",
-                Name = "name"
-            },
-            new ChildProfileDto {
-                Age = 12,
-                Gender = "mail",
-                Name = "name"
-            }
-        };
-    }
 
 
     ///<summary>
     /// удаление детского профиля по его id
     ///</summary>
     [HttpDelete]
-    public object Delete(string profileId, string name){
-        return "deleted " + profileId;
+    public async Task<bool> Delete(string profileId, string name){
+        return await _profile.RemoveChildProfile(profileId, name);
     }
 }

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Appservices.CreateProfileDtos;
 using Appservices.OutputDtos;
 using Serilog;
+using Appservices;
 
 namespace Web.Controllers;
 
@@ -11,6 +12,10 @@ namespace Web.Controllers;
 [Produces("application/json")]
 public class ProfileController : ControllerBase
 {
+    ProfileInteractor _profile;
+    public ProfileController(ProfileInteractor profile){
+        _profile = profile;
+    }
 
     //Сделать для пользователя, профиля и для детского профиля отдельные контроллеры или объединить их в один?
     //сделать все отдельными контроллерами, но сделать создание профиля, 
@@ -30,18 +35,9 @@ public class ProfileController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost]
-    public ProfileDto Post(CreateProfileDto input)
+    public async Task<ProfileDto> Post(CreateProfileDto input, CancellationToken cancellation)
     {
-        return new ProfileDto 
-        {
-            Id = "generatedid",
-            User = new UserDto{
-                Email = input.Email,
-                Id = input.UserId, 
-                Login = input.Login,
-                Password = input.Password,                
-            }            
-        };
+        return await _profile.Create(input);
     }
 
 
@@ -53,22 +49,9 @@ public class ProfileController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpGet]
-    public ProfileDto Get(string id)
+    public async Task<ProfileDto> Get(string id)
     {
-        var profile = new ProfileDto 
-        {
-            Id = "generatedid",
-            User = new UserDto
-            {
-                CreatedAt = DateTime.Now,
-                Email = "input.Email",
-                Id = "input.Id",
-                Login = "input.Login",
-                Password = "input.Password",
-            }            
-        };
-        Log.Information("FUCKING PROFILE IS {@0}", profile);
-        return profile;
+        return await _profile.GetProfile(id);
     }
 
     

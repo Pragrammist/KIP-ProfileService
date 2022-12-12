@@ -1,7 +1,8 @@
 using System.Reflection;
 using Serilog;
-using Appservices.OutputDtos;
-
+using Appservices;
+using Infrastructure;
+using MongoDB.Driver;
 
 namespace Web;
 
@@ -35,7 +36,7 @@ public class Program{
         builder.Host.UseSerilog();
 
         builder.Services.AddControllers();
-
+        BuildServices(builder.Services);
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(options => {
             var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -62,6 +63,13 @@ public class Program{
 
         app.Run();
     }
+    static void BuildServices(IServiceCollection services)
+    {
+        MapsterBuilder.ConfigureMapster();
+        services.AddMongoDb("mongodb://localhost:27017", "kip_profile_db", "profiles");
+        services.AddScoped<ProfileRepository, ProfileRepositoryImpl>();
+        services.AddScoped<ProfileInteractor>();
+    } 
 }
 
 
