@@ -18,8 +18,12 @@ public class ChildController : ControllerBase
     /// добавление детского профиля в сущетсвующий взрослый профиль 
     ///</summary>
     [HttpPost]
-    public async Task <bool> Post(CreateChildProfileDto child){
-        return await _profile.AddChildProfile(child);
+    public async Task <IActionResult> Post(CreateChildProfileDto child){
+        var isSuccess = await _profile.AddChildProfile(child);
+        if(isSuccess)
+            return Ok();
+        else
+            return BadRequest();
     }
 
 
@@ -28,7 +32,11 @@ public class ChildController : ControllerBase
     /// удаление детского профиля по его id
     ///</summary>
     [HttpDelete]
-    public async Task<bool> Delete(string profileId, string name){
-        return await _profile.RemoveChildProfile(profileId, name);
+    public async Task<IActionResult> Delete(string profileId, string name){
+        var isSuccess = await _profile.RemoveChildProfile(profileId, name);
+        if(isSuccess)
+            return Ok();
+        else
+            return BadRequest();
     }
 }

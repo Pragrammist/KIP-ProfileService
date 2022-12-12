@@ -5,12 +5,6 @@ namespace Appservices.CreateProfileDtos;
 
 public class CreateProfileDto
 {
-    [JsonPropertyName("userId")]
-    /// <summary>
-    /// Айди пользователя, которое сформировал auth сервис
-    /// </summary>
-    public string UserId { get; set; } = null!;
-
     /// <summary>
     /// Логин
     /// </summary>

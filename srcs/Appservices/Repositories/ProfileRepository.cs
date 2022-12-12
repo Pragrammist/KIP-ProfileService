@@ -1,11 +1,7 @@
 using Appservices.CreateProfileDtos;
 using Appservices.CreateChildProfileDtos;
 using Appservices.OutputDtos;
-using MongoDB.Driver;
-using ProfileService.Core;
 
-
-using Mapster;
 
 namespace Appservices;
 
@@ -20,4 +16,5 @@ public interface ProfileRepository
     
     Task<ProfileDto> FetchProfile(string id, CancellationToken token = default);
     
+    Task<long> CountBy(string? email = null, string? login = null);
 }

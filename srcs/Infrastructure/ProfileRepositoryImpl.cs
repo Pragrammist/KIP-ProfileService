@@ -15,7 +15,7 @@ public class ProfileRepositoryImpl : ProfileRepository
     {
         _profileRepo = profileRepo;
     }
-    UpdateDefinition<Profile> AddChild(ChildProfile profile) => Builders<Profile>.Update.Push(p => p.Childs, profile);
+    UpdateDefinition<Profile> AddChild(ChildProfile profile) => Builders<Profile>.Update.AddToSet(p => p.Childs, profile);
     
     UpdateDefinition<Profile> DeleteChild(string name) => Builders<Profile>.Update.PullFilter(p => p.Childs, p => p.Name == name);
 
@@ -53,5 +53,17 @@ public class ProfileRepositoryImpl : ProfileRepository
         var profile = await findResult.FirstOrDefaultAsync();
 
         return profile.Adapt<ProfileDto>();
+    }
+
+    public async Task<long> CountBy(string? email = null, string? login = null)
+    {
+        if(email is not null && login is not null)
+            return await _profileRepo.CountDocumentsAsync(f => (f.User.Email == email || string.IsNullOrEmpty(email)));
+        if(email is not null)
+            return await _profileRepo.CountDocumentsAsync(f => (f.User.Email == email)); 
+        if(login is not null)
+            return await _profileRepo.CountDocumentsAsync(f => (f.User.Login == login));
+        else
+            return await _profileRepo.CountDocumentsAsync(t => true);
     }
 }

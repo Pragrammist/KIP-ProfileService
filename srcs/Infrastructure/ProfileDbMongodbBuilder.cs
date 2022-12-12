@@ -3,7 +3,6 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Bson.Serialization.IdGenerators;
 using MongoDB.Bson;
-using Appservices.OutputDtos;
 
 namespace Infrastructure;
 
@@ -14,7 +13,7 @@ public interface ProfileDbMongodbBuilder
     void Build();
 }
 
-public class ProfileDbMongodbBuilderImpl : ProfileDbMongodbBuilder
+public class ProfileMongodbBuilderImpl : ProfileDbMongodbBuilder
 {
     public void Build()
     {

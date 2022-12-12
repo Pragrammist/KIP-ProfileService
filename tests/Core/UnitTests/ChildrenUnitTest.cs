@@ -98,11 +98,12 @@ public class ChildrenUnitTest
 
     [Fact]
     public void EnumarableTest(){
-        WillWatch w = new WillWatch();
+        Childern children = new Childern();
 
-        w.Add("qwe");
 
-        w.First();
+        children.Add(child);
+
+        children.First();
         Assert.True(true);
     }
 

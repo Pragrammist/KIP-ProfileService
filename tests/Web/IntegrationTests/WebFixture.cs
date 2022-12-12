@@ -6,17 +6,23 @@ using System;
 
 namespace IntegrationTests;
 
+
 public class WebFixture : WebApplicationFactory<Program>, IDisposable
 {
     
-    protected HttpClient _client;
+    public HttpClient Client { get; }
 
     public WebFixture(){
-        _client = CreateClient();
+        Client = CreateClient();
     }
     protected override void Dispose(bool disposing)
     {
-        _client.Dispose();
-        base.Dispose(disposing);
+        
     }
+}
+
+[CollectionDefinition("WebContext")]
+public class WebFixtireCollection : ICollectionFixture<WebFixture>
+{
+
 }
