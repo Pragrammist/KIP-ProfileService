@@ -44,7 +44,7 @@ public abstract class FavouriteBase : IList<string>, IEnumerable<string>{
     public bool Contains(string filmId) => _films.FirstOrDefault(t => t == filmId) is not null;
 
 
-    public void CopyTo(string[] array, int arrayIndex) => throw new NotImplementedException("FUCK YOU MICROSOFT");
+    public void CopyTo(string[] array, int arrayIndex) => _films.CopyTo(array, arrayIndex);
 
 
 

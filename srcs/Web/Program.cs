@@ -61,7 +61,6 @@ public class Program{
         app.UseAuthorization();
 
         app.MapControllers();
-
         app.Run();
     }
     static void BuildServices(IServiceCollection services, IConfiguration configuration)

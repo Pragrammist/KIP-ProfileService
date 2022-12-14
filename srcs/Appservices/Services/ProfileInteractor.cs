@@ -12,7 +12,7 @@ public class ProfileInteractor
     }
 
     public async Task<ProfileDto> Create(CreateProfileDto profileInfoDto, CancellationToken token = default){
-        if(await _repo.CountBy(profileInfoDto.Email, profileInfoDto.Login) > 0)
+        if(await _repo.CountBy(profileInfoDto.Email, profileInfoDto.Login, token) > 0)
             throw new UserAlreadyExistsException();
 
 
@@ -39,4 +39,34 @@ public class ProfileInteractor
     }
     
 
+    public async Task<bool> AddWatchded(string profileId, string filmId, CancellationToken token = default){
+        var res = await _repo.AddWatched(profileId, filmId, token);
+
+        return res;
+    }
+    public async Task<bool> DeleteWatchded(string profileId, string filmId, CancellationToken token = default){
+        var res = await _repo.DeleteWatched(profileId, filmId, token);
+        
+        return res;
+    }
+    public async Task<bool> AddWillWatch(string profileId, string filmId, CancellationToken token = default){
+        var res = await _repo.AddWillWatch(profileId, filmId, token);
+        
+        return res;
+    }
+    public async Task<bool> DeleteWillWatch(string profileId, string filmId, CancellationToken token = default){
+        var res = await _repo.DeleteWillWatch(profileId, filmId, token);
+        
+        return res;
+    }
+    public async Task<bool> AddScored(string profileId, string filmId, CancellationToken token = default){
+        var res = await _repo.AddScored(profileId, filmId, token);
+        
+        return res;
+    }
+    public async Task<bool> DeleteScored(string profileId, string filmId, CancellationToken token = default){
+        var res = await _repo.DeleteScored(profileId, filmId, token);
+        
+        return res;
+    }
 }

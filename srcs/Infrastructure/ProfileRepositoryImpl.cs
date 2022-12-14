@@ -15,11 +15,26 @@ public class ProfileRepositoryImpl : ProfileRepository
     {
         _profileRepo = profileRepo;
     }
+
+
     UpdateDefinition<Profile> AddChild(ChildProfile profile) => Builders<Profile>.Update.AddToSet(p => p.Childs, profile);
     
     UpdateDefinition<Profile> DeleteChild(string name) => Builders<Profile>.Update.PullFilter(p => p.Childs, p => p.Name == name);
 
-    
+
+    UpdateDefinition<Profile> AddWatched(string filmId) => Builders<Profile>.Update.AddToSet(p => p.Watched, filmId);
+
+    UpdateDefinition<Profile> DeleteWatched(string filmId) => Builders<Profile>.Update.Pull(p => p.Watched, filmId);
+
+
+    UpdateDefinition<Profile> AddWillWatch(string filmId) => Builders<Profile>.Update.AddToSet(p => p.WillWatch, filmId);
+
+    UpdateDefinition<Profile> DeleteWillWatch(string filmId) => Builders<Profile>.Update.Pull(p => p.WillWatch, filmId);
+
+
+    UpdateDefinition<Profile> AddScored(string filmId) => Builders<Profile>.Update.AddToSet(p => p.Scored, filmId);
+
+    UpdateDefinition<Profile> DeleteScored(string filmId) => Builders<Profile>.Update.Pull(p => p.Scored, filmId);
 
     public async Task<bool> AddChildProfile(CreateChildProfileDto profileInfo, CancellationToken token = default)
     {
@@ -55,15 +70,57 @@ public class ProfileRepositoryImpl : ProfileRepository
         return profile.Adapt<ProfileDto>();
     }
 
-    public async Task<long> CountBy(string? email = null, string? login = null)
+    public async Task<long> CountBy(string? email = null, string? login = null, CancellationToken token = default)
     {
         if(email is not null && login is not null)
-            return await _profileRepo.CountDocumentsAsync(f => (f.User.Email == email || f.User.Login == login));
+            return await _profileRepo.CountDocumentsAsync(f => (f.User.Email == email || f.User.Login == login), cancellationToken: token);
         if(email is not null)
-            return await _profileRepo.CountDocumentsAsync(f => (f.User.Email == email)); 
+            return await _profileRepo.CountDocumentsAsync(f => (f.User.Email == email), cancellationToken: token); 
         if(login is not null)
-            return await _profileRepo.CountDocumentsAsync(f => (f.User.Login == login));
+            return await _profileRepo.CountDocumentsAsync(f => (f.User.Login == login), cancellationToken: token);
         else
-            return await _profileRepo.CountDocumentsAsync(t => true);
+            return await _profileRepo.CountDocumentsAsync(t => true, cancellationToken: token);
+    }
+
+    public async Task<bool> AddWatched(string profileId, string filmId, CancellationToken token = default)
+    {
+        var res = await _profileRepo.UpdateOneAsync(p => p.Id == profileId, AddWatched(filmId), cancellationToken: token);
+
+        return res.ModifiedCount > 0;
+    }
+
+    public async Task<bool> DeleteWatched(string profileId, string filmId, CancellationToken token = default)
+    {
+        var res = await _profileRepo.UpdateOneAsync(p => p.Id == profileId, DeleteWatched(filmId), cancellationToken: token);
+
+        return res.ModifiedCount > 0;
+    }
+
+    public async Task<bool> AddWillWatch(string profileId, string filmId, CancellationToken token = default)
+    {
+        var res = await _profileRepo.UpdateOneAsync(p => p.Id == profileId, AddWillWatch(filmId), cancellationToken: token);
+
+        return res.ModifiedCount > 0;
+    }
+
+    public async Task<bool> DeleteWillWatch(string profileId, string filmId, CancellationToken token = default)
+    {
+        var res = await _profileRepo.UpdateOneAsync(p => p.Id == profileId, DeleteWillWatch(filmId), cancellationToken: token);
+
+        return res.ModifiedCount > 0;
+    }
+
+    public async Task<bool> AddScored(string profileId, string filmId, CancellationToken token = default) 
+    {
+        var res = await _profileRepo.UpdateOneAsync(p => p.Id == profileId, AddScored(filmId), cancellationToken: token);
+
+        return res.ModifiedCount > 0;
+    }
+
+    public async Task<bool> DeleteScored(string profileId, string filmId, CancellationToken token = default)
+    {
+         var res = await _profileRepo.UpdateOneAsync(p => p.Id == profileId, DeleteScored(filmId), cancellationToken: token);
+
+        return res.ModifiedCount > 0;
     }
 }

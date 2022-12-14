@@ -22,6 +22,7 @@ public class ProfileMongodbBuilderImpl : ProfileMongodbBuilder
         BsonClassMap.RegisterClassMap<Profile>(map => {
             map.AutoMap();
             SetStringId(map);
+            
         });
     }
 }

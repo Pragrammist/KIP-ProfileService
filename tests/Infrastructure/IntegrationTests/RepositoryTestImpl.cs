@@ -10,13 +10,13 @@ using ProfileService.Core;
 namespace IntegrationTests;
 
 [Collection("MongoDb")]
-public class ProfileRepositoryTestImpl
+public class ProfileRepositoryImplTest
 {
     IMongoCollection<Profile> _repo;
     CreateProfileDto createProfile => new CreateProfileDto {Email = "someemail", Login = "somelogin", Password = "somepassword"};
     CreateChildProfileDto createChildProfileDto(string profileId) => new CreateChildProfileDto { Age = 0, Gender = 0, Name = "name", ProfileId = profileId};
     ProfileRepositoryImpl _profileRepo;
-    public ProfileRepositoryTestImpl(MongoDbTestBase dbFixture)
+    public ProfileRepositoryImplTest(MongoDbTestBase dbFixture)
     {
         _repo = dbFixture.Repo;  
         _profileRepo = new ProfileRepositoryImpl(_repo);
@@ -95,5 +95,80 @@ public class ProfileRepositoryTestImpl
         byLogin.Should().BeGreaterThan(0);
         by.Should().BeGreaterThan(0);
         all.Should().BeGreaterThan(before);
+    }
+
+    [Fact]
+    public async Task AddWatched(){
+        var profile = await _profileRepo.CreateProfile(createProfile);
+
+        var res = await _profileRepo.AddWatched(profile.Id, "SOMEFILM");
+
+        res.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task DeleteWatched(){
+        var (profileId, filmId) = await AddWatchedFilm();
+
+        var res = await _profileRepo.DeleteWatched(profileId, filmId);
+
+        res.Should().BeTrue();
+    }
+    async Task<(string, string)> AddWatchedFilm(){
+        var profile = await _profileRepo.CreateProfile(createProfile);
+        var profileId = profile.Id;
+        var filmId = "SOMEFILM";
+        var res = await _profileRepo.AddWatched(profileId, filmId);
+        return (profileId,filmId);
+    }
+
+    [Fact]
+    public async Task AddWillwatch(){
+        var profile = await _profileRepo.CreateProfile(createProfile);
+
+        var res = await _profileRepo.AddWillWatch(profile.Id, "SOMEFILM");
+
+        res.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task DeleteWillWatch(){
+        var (profileId, filmId) = await AddWillWatchFilm();
+
+        var res = await _profileRepo.DeleteWillWatch(profileId, filmId);
+
+        res.Should().BeTrue();
+    }
+    async Task<(string, string)> AddWillWatchFilm(){
+        var profile = await _profileRepo.CreateProfile(createProfile);
+        var profileId = profile.Id;
+        var filmId = "SOMEFILM";
+        var res = await _profileRepo.AddWillWatch(profileId, filmId);
+        return (profileId,filmId);
+    }
+    [Fact]
+    public async Task AddScored(){
+        var profile = await _profileRepo.CreateProfile(createProfile);
+
+        var res = await _profileRepo.AddScored(profile.Id, "SOMEFILM");
+
+        res.Should().BeTrue();
+    }
+
+
+    [Fact]
+    public async Task DeleteScored(){
+         var (profileId, filmId) = await AddScoredFilm();
+
+        var res = await _profileRepo.DeleteScored(profileId, filmId);
+
+        res.Should().BeTrue();
+    }
+    async Task<(string, string)> AddScoredFilm(){
+        var profile = await _profileRepo.CreateProfile(createProfile);
+        var profileId = profile.Id;
+        var filmId = "SOMEFILM";
+        var res = await _profileRepo.AddScored(profileId, filmId);
+        return (profileId,filmId);
     }
 }

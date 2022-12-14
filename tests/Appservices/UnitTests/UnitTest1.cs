@@ -10,13 +10,13 @@ using Appservices.Exceptions;
 
 namespace UnitTests;
 
-public class UnitTest1
+public class ProfileInteractorTest
 {
     readonly string loginThatExists = "i'm existing user";
     readonly string emailThatDoesntExists = "i'm not existing user";
     ProfileRepository GetProfileRepoForCreateProfileForExistingUser(){
         var repo = new Mock<ProfileRepository>();
-        repo.Setup(t => t.CountBy(It.IsAny<string>(), loginThatExists)).ReturnsAsync(1);
+        repo.Setup(t => t.CountBy(It.IsAny<string>(), loginThatExists, It.IsAny<CancellationToken>())).ReturnsAsync(1);
         SetCreatepProfileMethod(repo);
         return repo.Object;
     }
@@ -24,7 +24,7 @@ public class UnitTest1
     ProfileRepository GetProfileRepoForCreateProfileForNotExistingUser()
     {
         var repo = new Mock<ProfileRepository>();
-        repo.Setup(t => t.CountBy(emailThatDoesntExists, It.IsAny<string>())).ReturnsAsync(0);
+        repo.Setup(t => t.CountBy(emailThatDoesntExists, It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(0);
         SetCreatepProfileMethod(repo);
         return repo.Object;
     }

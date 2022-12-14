@@ -16,5 +16,17 @@ public interface ProfileRepository
     
     Task<ProfileDto> FetchProfile(string id, CancellationToken token = default);
     
-    Task<long> CountBy(string? email = null, string? login = null);
+    Task<long> CountBy(string? email = null, string? login = null, CancellationToken token = default);
+
+    Task<bool> AddWatched(string profileId, string filmId, CancellationToken token);
+
+    Task<bool> DeleteWatched(string profileId, string filmId, CancellationToken token);
+
+    Task<bool> AddWillWatch(string profileId, string filmId, CancellationToken token);
+
+    Task<bool> DeleteWillWatch(string profileId, string filmId, CancellationToken token);
+
+    Task<bool> AddScored(string profileId, string filmId, CancellationToken token);
+    
+    Task<bool> DeleteScored(string profileId, string filmId, CancellationToken token);
 }
