@@ -23,20 +23,21 @@ public class Program{
 
     }
     static void AppBuild(string[] args){
+        MapsterBuilder.ConfigureMapster();
         var builder = WebApplication.CreateBuilder(args);
         
         //var configuration = builder.Configuration;
-        //var logstashUrl = configuration["LOGSTASH_URL"]; //http://localhost:8080
+        var logstashUrl = builder.Configuration["LOGSTASH_URL"] ?? "http://localhost:8080";
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
-            .WriteTo.Http("http://localhost:8080", queueLimitBytes: null)
+            .WriteTo.Http(logstashUrl, queueLimitBytes: null)
             .CreateLogger();
         
 
         builder.Host.UseSerilog();
 
         builder.Services.AddControllers();
-        BuildServices(builder.Services);
+        BuildServices(builder.Services, builder.Configuration);
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(options => {
             var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -63,13 +64,17 @@ public class Program{
 
         app.Run();
     }
-    static void BuildServices(IServiceCollection services)
+    static void BuildServices(IServiceCollection services, IConfiguration configuration)
     {
-        MapsterBuilder.ConfigureMapster();
-        services.AddMongoDb("mongodb://localhost:27017", "kip_profile_db", "profiles");
+        var connection = configuration["MONGODB_CONNECTION_STRING"] ?? "mongodb://localhost:27017";
+        var dbName = configuration["DB_NAME"] ?? "kip_profile_db";
+        var collections = configuration["COLLECTION_NAME"] ?? "profiles";
+        services.AddMongoDb(connection, dbName, collections);
         services.AddScoped<ProfileRepository, ProfileRepositoryImpl>();
         services.AddScoped<ProfileInteractor>();
-    } 
+    }
+
+     
 }
 
 

@@ -58,7 +58,7 @@ public class ProfileRepositoryImpl : ProfileRepository
     public async Task<long> CountBy(string? email = null, string? login = null)
     {
         if(email is not null && login is not null)
-            return await _profileRepo.CountDocumentsAsync(f => (f.User.Email == email || string.IsNullOrEmpty(email)));
+            return await _profileRepo.CountDocumentsAsync(f => (f.User.Email == email || f.User.Login == login));
         if(email is not null)
             return await _profileRepo.CountDocumentsAsync(f => (f.User.Email == email)); 
         if(login is not null)

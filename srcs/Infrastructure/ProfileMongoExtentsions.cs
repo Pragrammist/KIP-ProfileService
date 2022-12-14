@@ -14,7 +14,7 @@ public static class ProfileMongoExtentsions
         services.AddSingleton<IMongoDatabase>(p => {
             var mongo = p.GetRequiredService<IMongoClient>();
             var db = mongo.GetDatabase(dbName);
-            ProfileDbMongodbBuilder bdConfiguration = new ProfileMongodbBuilderImpl();
+            ProfileMongodbBuilder bdConfiguration = new ProfileMongodbBuilderImpl();
             bdConfiguration.Build();
             return db;
         });

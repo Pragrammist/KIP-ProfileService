@@ -8,12 +8,12 @@ namespace Infrastructure;
 
 
 
-public interface ProfileDbMongodbBuilder
+public interface ProfileMongodbBuilder
 {
     void Build();
 }
 
-public class ProfileMongodbBuilderImpl : ProfileDbMongodbBuilder
+public class ProfileMongodbBuilderImpl : ProfileMongodbBuilder
 {
     public void Build()
     {

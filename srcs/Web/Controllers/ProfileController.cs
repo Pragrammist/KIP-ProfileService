@@ -3,6 +3,8 @@ using Appservices.CreateProfileDtos;
 using Appservices.OutputDtos;
 using Serilog;
 using Appservices;
+using OperationResult;
+using Appservices.Exceptions;
 
 namespace Web.Controllers;
 
@@ -35,9 +37,16 @@ public class ProfileController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost]
-    public async Task<ProfileDto> Post(CreateProfileDto input, CancellationToken cancellation)
+    public async Task<IActionResult> Post(CreateProfileDto input, CancellationToken cancellation)
     {
-        return await _profile.Create(input);
+        try{
+            var profile =  await _profile.Create(input, cancellation);
+            return new ObjectResult(profile);
+        }
+        catch(UserAlreadyExistsException){
+            return BadRequest();
+        }
+        
     }
 
 
@@ -49,9 +58,9 @@ public class ProfileController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpGet]
-    public async Task<ProfileDto> Get(string id)
+    public async Task<ProfileDto> Get(string id, CancellationToken cancellation)
     {
-        return await _profile.GetProfile(id);
+        return await _profile.GetProfile(id, cancellation);
     }
 
     

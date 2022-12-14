@@ -1,4 +1,5 @@
-using System;
+using System.IO;
+using GenFu;
 using Xunit;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -11,21 +12,24 @@ namespace IntegrationTests;
 [Collection("WebContext")]
 public class ProfileWebTest
 {
+    class UserToSend{
+        public string Login {get; set; } = null!;
+        public string Email {get; set; } = null!;
+
+        public string Password {get; set; } = null!;
+    }
+
     readonly WebFixture _webContext;
     public ProfileWebTest(WebFixture webContext){
         _webContext = webContext;
     }
     const string url = "profile";
-    object userToPost => new 
-        {
-            Login = "{ get; set; } = null!;",
-            Email = "ew",
-            Password = "ewe",
-        };
+    
     
     [Fact]
     public async Task Get()
     {
+        var userToPost = User();
         var postResponseMessage = await _webContext.Client.PostAsJsonAsync(url, userToPost);
         string id = await GetUserId(postResponseMessage);        ;
         var requestParams = $"?id={id}";
@@ -36,6 +40,7 @@ public class ProfileWebTest
     [Fact]   
     public async Task Post()
     {
+        var userToPost = User();
         var responseMessage = await _webContext.Client.PostAsJsonAsync(url, userToPost);
 
         responseMessage.IsSuccessStatusCode.Should().BeTrue();
@@ -45,6 +50,15 @@ public class ProfileWebTest
         var jsobj = JObject.Parse(json);
         var res = jsobj["id"].ToString();
         return res;
+    }
+    UserToSend User(){
+        var user = new UserToSend {};
+        
+        user.Login = Path.GetRandomFileName();
+        user.Email = Path.GetRandomFileName();
+        user.Password = Path.GetRandomFileName();
+
+        return user;
     }
     
 }

@@ -31,7 +31,7 @@ public class MongoDbTestBase : IDisposable
         Client.DropDatabase(DB_NAME);
     }
     void Build(){
-        ProfileDbMongodbBuilder mongoBuilder = new ProfileMongodbBuilderImpl();
+        ProfileMongodbBuilder mongoBuilder = new ProfileMongodbBuilderImpl();
         mongoBuilder.Build();
     }
     
