@@ -2,7 +2,10 @@ using System.Reflection;
 using Serilog;
 using Appservices;
 using Infrastructure;
-using MongoDB.Driver;
+using GrpcProfileService;
+using Web.Services;
+using Web.Middlewares;
+using Web.GrpcInterceptors;
 
 namespace Web;
 
@@ -29,6 +32,7 @@ public class Program{
         //var configuration = builder.Configuration;
         var logstashUrl = builder.Configuration["LOGSTASH_URL"] ?? "http://localhost:8080";
         Log.Logger = new LoggerConfiguration()
+            .WriteTo.File(@"Logs\Log.txt")
             .WriteTo.Console()
             .WriteTo.Http(logstashUrl, queueLimitBytes: null)
             .CreateLogger();
@@ -37,7 +41,15 @@ public class Program{
         builder.Host.UseSerilog();
 
         builder.Services.AddControllers();
-        BuildServices(builder.Services, builder.Configuration);
+        builder.Services.AddGrpc(opt =>{
+            opt.Interceptors.Add<CreateProfileMetricsInterceptor>();
+        });
+        builder.Services.AddGrpcReflection();
+        
+        builder.Services.AddSingleton<ProfileMetrics>();
+        builder.Services.AddSingleton<ChildProfileMetrics>();
+
+        BuildServicesNotFromWeb(builder.Services, builder.Configuration);
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(options => {
             var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -46,10 +58,9 @@ public class Program{
 
         var app = builder.Build();
 
-        
         if (app.Environment.IsDevelopment())
         {
-            //
+            app.MapGrpcReflectionService();
         }
 
         app.UseSwagger();
@@ -57,14 +68,15 @@ public class Program{
             options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
             options.RoutePrefix = string.Empty;
         });
-
+        app.UseMiddleware<CreateChildProfileMetricsMiddleware>();
         app.UseAuthorization();
-
+        app.MapGrpcService<ProfileGrpcService>();
         app.MapControllers();
         app.Run();
     }
-    static void BuildServices(IServiceCollection services, IConfiguration configuration)
+    static public void BuildServicesNotFromWeb(IServiceCollection services, IConfiguration configuration)
     {
+        MapsterBuilder.ConfigureMapster();
         var connection = configuration["MONGODB_CONNECTION_STRING"] ?? "mongodb://localhost:27017";
         var dbName = configuration["DB_NAME"] ?? "kip_profile_db";
         var collections = configuration["COLLECTION_NAME"] ?? "profiles";
@@ -72,8 +84,6 @@ public class Program{
         services.AddScoped<ProfileRepository, ProfileRepositoryImpl>();
         services.AddScoped<ProfileInteractor>();
     }
-
-     
 }
 
 

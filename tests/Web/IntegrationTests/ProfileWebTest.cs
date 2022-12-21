@@ -6,6 +6,8 @@ using FluentAssertions;
 using System.Net.Http.Json;
 using System.Net.Http;
 using Newtonsoft.Json.Linq;
+using GrpcProfileService;
+using Mapster;
 
 namespace IntegrationTests;
 
@@ -14,24 +16,34 @@ public class ProfileWebTest
 {
     class UserToSend{
         public string Login {get; set; } = null!;
+
         public string Email {get; set; } = null!;
 
         public string Password {get; set; } = null!;
     }
 
     readonly WebFixture _webContext;
-    public ProfileWebTest(WebFixture webContext){
+    GrpcFixture _grpcFixture;
+    public ProfileWebTest(WebFixture webContext, GrpcFixture grpcFixture){
         _webContext = webContext;
+        _grpcFixture = grpcFixture;
     }
     const string url = "profile";
     
-    
+    [Fact]
+    public async Task CreateProfileGrpc()
+    {
+        var profileData = User().Adapt<CreateProfileRequest>();
+        var res = await _grpcFixture.GrpcClient.CreateProfileAsync(profileData);
+        res.Id.Should().NotBeNull();
+    }
+
     [Fact]
     public async Task Get()
     {
         var userToPost = User();
         var postResponseMessage = await _webContext.Client.PostAsJsonAsync(url, userToPost);
-        string id = await GetUserId(postResponseMessage);        ;
+        string id = await GetUserId(postResponseMessage);
         var requestParams = $"?id={id}";
         var responseMessage = await _webContext.Client.GetAsync(url+requestParams);
 
@@ -41,6 +53,7 @@ public class ProfileWebTest
     public async Task Post()
     {
         var userToPost = User();
+        
         var responseMessage = await _webContext.Client.PostAsJsonAsync(url, userToPost);
 
         responseMessage.IsSuccessStatusCode.Should().BeTrue();
