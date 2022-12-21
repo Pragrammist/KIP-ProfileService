@@ -24,7 +24,7 @@ public class CreateChildProfileMetricsMiddleware{
             await _request.Invoke(httpContext);
             metrics.IncCreateProfileSuccefulGrpc();
         }
-        catch(Exception ex){
+        catch(Exception){
             metrics.IncCreateProfileFailureGrpc();
             throw;
         }
