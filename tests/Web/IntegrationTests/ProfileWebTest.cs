@@ -8,6 +8,11 @@ using System.Net.Http;
 using Newtonsoft.Json.Linq;
 using GrpcProfileService;
 using Mapster;
+using Web.Services;
+using System.Reflection;
+using Prometheus;
+using System;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace IntegrationTests;
 
@@ -38,6 +43,24 @@ public class ProfileWebTest
         res.Id.Should().NotBeNull();
     }
 
+
+    [Fact]
+    public async Task CreateProfileGrpcMetrics()
+    {
+        var profileData = User().Adapt<CreateProfileRequest>();
+        var profileMetrics = _webContext.Services.GetRequiredService<ProfileMetrics>();
+
+        try{
+            await _grpcFixture.GrpcClient.CreateProfileAsync(profileData);
+            
+        } catch{}
+
+
+        var succCounter = GetChildCounter("ChildProfileCreatedSucc", profileMetrics).Value;
+        var failCounter = GetChildCounter("ChildProfileCreatedFail", profileMetrics).Value;
+
+        Assert.True(succCounter > 0 || failCounter > 0);
+    }
     [Fact]
     public async Task Get()
     {
@@ -73,6 +96,18 @@ public class ProfileWebTest
 
         return user;
     }
-    
+    Counter GetChildCounter (string fieldName, ProfileMetrics metrics)
+    {
+
+        var typeOfMetrics = typeof(ProfileMetrics);
+
+        var metricsField = typeOfMetrics.GetField(fieldName, 
+        BindingFlags.Instance | BindingFlags.NonPublic) 
+        ?? throw new NullReferenceException("field doesn't found");
+
+        var value = metricsField.GetValue(metrics) as Counter ?? throw new NullReferenceException("value doesn't type of Metrics");
+
+        return value;
+    }
 }
 

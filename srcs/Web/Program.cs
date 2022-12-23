@@ -6,6 +6,7 @@ using GrpcProfileService;
 using Web.Services;
 using Web.Middlewares;
 using Web.GrpcInterceptors;
+using Prometheus;
 
 namespace Web;
 
@@ -60,9 +61,11 @@ public class Program{
 
         if (app.Environment.IsDevelopment())
         {
-            app.MapGrpcReflectionService();
+            
         }
-
+        app.UseRouting();
+        app.UseHttpMetrics(options => options.ReduceStatusCodeCardinality());
+        app.UseGrpcMetrics();
         app.UseSwagger();
         app.UseSwaggerUI(options => {
             options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
@@ -72,6 +75,10 @@ public class Program{
         app.UseAuthorization();
         app.MapGrpcService<ProfileGrpcService>();
         app.MapControllers();
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapMetrics();
+        });
         app.Run();
     }
     static public void BuildServicesNotFromWeb(IServiceCollection services, IConfiguration configuration)

@@ -24,7 +24,7 @@ public class CreateProfileMetricsInterceptor : Interceptor
             _metrics.IncCreateProfileSuccefulGrpc();
             return returnRes;
         }
-        catch (Exception)
+        catch
         {
             _metrics.IncCreateProfileSuccefulGrpc();
             throw;

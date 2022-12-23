@@ -22,6 +22,7 @@
     <PackageReference Include="prometheus-net.AspNetCore" Version="6.0.0"/>
     <PackageReference Include="prometheus-net" Version="6.0.0"/>
     <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.50.0"/>
+    <PackageReference Include="prometheus-net.AspNetCore.Grpc" Version="6.0.0"/>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Appservices\Appservices.csproj"/>

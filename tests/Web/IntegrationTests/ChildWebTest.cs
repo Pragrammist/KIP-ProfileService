@@ -1,15 +1,19 @@
 using System.IO;
-using System.Security.Cryptography.X509Certificates;
 using Xunit;
 using System.Threading.Tasks;
 using FluentAssertions;
 using System.Net.Http.Json;
 using Newtonsoft.Json.Linq;
+using Microsoft.Extensions.DependencyInjection;
+using Web.Services;
+using Prometheus;
+using System.Reflection;
+using System;
 
 namespace IntegrationTests;
 
 [Collection("WebContext")]
-public class ChildWebTest
+public class ChildProfileWebTest
 {
 
     class UserToSend{
@@ -43,7 +47,7 @@ public class ChildWebTest
         };
         return child;
     }
-    public ChildWebTest(WebFixture webContext){
+    public ChildProfileWebTest(WebFixture webContext){
         _webContext = webContext;
     }
 
@@ -65,6 +69,21 @@ public class ChildWebTest
 
         responseMessage.IsSuccessStatusCode.Should().BeTrue();
     }
+    [Fact]
+    public async Task ChildProfileMetricsTest(){
+
+        try { 
+            await CreateChildProfile();
+        }
+        catch { }
+        var childMetrics = _webContext.Services.GetRequiredService<ChildProfileMetrics>();
+
+        var counterSucc = GetChildCounter("ChildProfileCreatedSucc", childMetrics).Value;
+        var counterFail = GetChildCounter("ChildProfileCreatedFail", childMetrics).Value;
+
+        Assert.True(counterFail > 0 || counterSucc > 0);
+
+    }
     async Task<string> CreateProfile (){ 
         var userToPost = FillRandmlyUserField();
         var postResponseMessage = await _webContext.Client.PostAsJsonAsync(profileUrlPost, userToPost);
@@ -76,9 +95,24 @@ public class ChildWebTest
         
         return res;
     }
-    async Task<ChildProfileToSend> CreateChildProfile(){
+    async Task<ChildProfileToSend> CreateChildProfile()
+    {
         var child = await CreateChild();
         var responseMessage = await _webContext.Client.PostAsJsonAsync(url, child);
         return child;
+    }
+    
+    Counter GetChildCounter (string fieldName, ChildProfileMetrics metrics)
+    {
+
+        var typeOfMetrics = typeof(ChildProfileMetrics);
+
+        var metricsField = typeOfMetrics.GetField(fieldName, 
+        BindingFlags.Instance | BindingFlags.NonPublic) 
+        ?? throw new NullReferenceException("field doesn't found");
+
+        var value = metricsField.GetValue(metrics) as Counter ?? throw new NullReferenceException("value doesn't type of Metrics");
+
+        return value;
     }
 }
