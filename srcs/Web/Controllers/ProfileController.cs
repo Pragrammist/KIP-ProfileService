@@ -3,7 +3,6 @@ using Appservices.CreateProfileDtos;
 using Appservices.OutputDtos;
 using Serilog;
 using Appservices;
-using OperationResult;
 using Appservices.Exceptions;
 
 namespace Web.Controllers;

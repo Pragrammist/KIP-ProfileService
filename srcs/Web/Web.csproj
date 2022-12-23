@@ -27,7 +27,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Appservices\Appservices.csproj"/>
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj"/>
-    <ProjectReference Include="..\OperationResult\OperationResult.csproj"/>
   </ItemGroup>
   <ItemGroup>
     <Protobuf Include="Protos\createprofile.proto" GrpcServices="Server"/>
