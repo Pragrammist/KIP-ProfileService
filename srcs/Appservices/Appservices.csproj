@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj"/>
-    <ProjectReference Include="..\OperationResult\OperationResult.csproj"/>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MongoDB.Driver" Version="2.18.0"/>

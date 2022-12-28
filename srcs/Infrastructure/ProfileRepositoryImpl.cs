@@ -11,14 +11,14 @@ namespace Infrastructure;
 public class ProfileRepositoryImpl : ProfileRepository
 {
     readonly IMongoCollection<Profile> _profileRepo;
-    public ProfileRepositoryImpl (IMongoCollection<Profile> profileRepo)
+    public ProfileRepositoryImpl(IMongoCollection<Profile> profileRepo)
     {
         _profileRepo = profileRepo;
     }
 
 
     UpdateDefinition<Profile> AddChild(ChildProfile profile) => Builders<Profile>.Update.AddToSet(p => p.Childs, profile);
-    
+
     UpdateDefinition<Profile> DeleteChild(string name) => Builders<Profile>.Update.PullFilter(p => p.Childs, p => p.Name == name);
 
 
@@ -41,14 +41,14 @@ public class ProfileRepositoryImpl : ProfileRepository
         var childProfile = profileInfo.Adapt<ChildProfile>();
 
         var updateResult = await _profileRepo.UpdateOneAsync(f => f.Id == profileInfo.ProfileId, AddChild(childProfile), cancellationToken: token);
-        
+
         return updateResult.ModifiedCount > 0;
 
     }
-    
+
     public async Task<bool> RemoveChildProfile(string profileId, string name, CancellationToken token = default)
     {
-        var updateResult = await _profileRepo.UpdateOneAsync(t => t.Id == profileId, DeleteChild(name), cancellationToken:token);
+        var updateResult = await _profileRepo.UpdateOneAsync(t => t.Id == profileId, DeleteChild(name), cancellationToken: token);
         return updateResult.ModifiedCount > 0;
     }
 
@@ -56,7 +56,7 @@ public class ProfileRepositoryImpl : ProfileRepository
     {
         var profile = profileData.Adapt<Profile>();
 
-        await _profileRepo.InsertOneAsync(profile, cancellationToken:token);
+        await _profileRepo.InsertOneAsync(profile, cancellationToken: token);
 
         return profile.Adapt<ProfileDto>();
     }
@@ -72,11 +72,11 @@ public class ProfileRepositoryImpl : ProfileRepository
 
     public async Task<long> CountBy(string? email = null, string? login = null, CancellationToken token = default)
     {
-        if(email is not null && login is not null)
+        if (email is not null && login is not null)
             return await _profileRepo.CountDocumentsAsync(f => (f.User.Email == email || f.User.Login == login), cancellationToken: token);
-        if(email is not null)
-            return await _profileRepo.CountDocumentsAsync(f => (f.User.Email == email), cancellationToken: token); 
-        if(login is not null)
+        if (email is not null)
+            return await _profileRepo.CountDocumentsAsync(f => (f.User.Email == email), cancellationToken: token);
+        if (login is not null)
             return await _profileRepo.CountDocumentsAsync(f => (f.User.Login == login), cancellationToken: token);
         else
             return await _profileRepo.CountDocumentsAsync(t => true, cancellationToken: token);
@@ -110,7 +110,7 @@ public class ProfileRepositoryImpl : ProfileRepository
         return res.ModifiedCount > 0;
     }
 
-    public async Task<bool> AddScored(string profileId, string filmId, CancellationToken token = default) 
+    public async Task<bool> AddScored(string profileId, string filmId, CancellationToken token = default)
     {
         var res = await _profileRepo.UpdateOneAsync(p => p.Id == profileId, AddScored(filmId), cancellationToken: token);
 
@@ -119,7 +119,7 @@ public class ProfileRepositoryImpl : ProfileRepository
 
     public async Task<bool> DeleteScored(string profileId, string filmId, CancellationToken token = default)
     {
-         var res = await _profileRepo.UpdateOneAsync(p => p.Id == profileId, DeleteScored(filmId), cancellationToken: token);
+        var res = await _profileRepo.UpdateOneAsync(p => p.Id == profileId, DeleteScored(filmId), cancellationToken: token);
 
         return res.ModifiedCount > 0;
     }

@@ -19,7 +19,8 @@ public class ProfileInteractorIntegrationTests : IClassFixture<DbFixture>
     {
         _fixture = fixture;
     }
-    ProfileInteractor GetProfileInteractor(){        
+    ProfileInteractor GetProfileInteractor()
+    {
         var repo = new ProfileRepositoryImpl(_fixture.Collection);
         ProfileInteractor interactor = new ProfileInteractor(repo);
         return interactor;
@@ -44,12 +45,14 @@ public class ProfileInteractorIntegrationTests : IClassFixture<DbFixture>
 
 
 
-        await Assert.ThrowsAsync<UserAlreadyExistsException>(async () => {
+        await Assert.ThrowsAsync<UserAlreadyExistsException>(async () =>
+        {
             await interactor.Create(profile);
         });
     }
 
-    CreateProfileDto Profile => new CreateProfileDto{
+    CreateProfileDto Profile => new CreateProfileDto
+    {
         Email = Path.GetRandomFileName(),
         Login = Path.GetRandomFileName(),
         Password = Path.GetRandomFileName()
@@ -62,9 +65,10 @@ public class DbFixture : IDisposable
     IMongoClient _client;
     const string DB_NAME = "test-profile-db";
     const string COLLECTION_NAME = "profiles";
-    public DbFixture(){
+    public DbFixture()
+    {
         MapsterBuilder.ConfigureMapster();
-        
+
         _client = new MongoClient("mongodb://localhost:27017");
         var db = _client.GetDatabase(DB_NAME);
         ProfileMongodbBuilder b = new ProfileMongodbBuilderImpl();

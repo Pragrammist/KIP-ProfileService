@@ -10,17 +10,19 @@ namespace Web.Controllers;
 public class ChildController : ControllerBase
 {
 
-    ProfileInteractor _profile;
-    public ChildController(ProfileInteractor profile){
+    readonly ProfileInteractor _profile;
+    public ChildController(ProfileInteractor profile)
+    {
         _profile = profile;
     }
     ///<summary>
     /// добавление детского профиля в сущетсвующий взрослый профиль 
     ///</summary>
     [HttpPost]
-    public async Task <IActionResult> Post(CreateChildProfileDto child){
+    public async Task<IActionResult> Post(CreateChildProfileDto child)
+    {
         var isSuccess = await _profile.AddChildProfile(child);
-        if(isSuccess)
+        if (isSuccess)
             return Ok();
         else
             return BadRequest();
@@ -32,11 +34,9 @@ public class ChildController : ControllerBase
     /// удаление детского профиля по его id
     ///</summary>
     [HttpDelete]
-    public async Task<IActionResult> Delete(string profileId, string name){
+    public async Task<IActionResult> Delete(string profileId, string name)
+    {
         var isSuccess = await _profile.RemoveChildProfile(profileId, name);
-        if(isSuccess)
-            return Ok();
-        else
-            return BadRequest();
+        return isSuccess ? Ok() : BadRequest();
     }
 }

@@ -4,7 +4,8 @@ using FluentAssertions;
 using System.Collections.Generic;
 
 namespace UnitTests;
-public class ProfileUnitTest{
+public class ProfileUnitTest
+{
 
 
     [Theory]
@@ -17,7 +18,8 @@ public class ProfileUnitTest{
     }
 
     [Fact]
-    public void TestChilds(){
+    public void TestChilds()
+    {
         Profile profile = new Profile("ID", new User("LOGIN", "EMAIL", "PASSWORD"));
         var childProfile = new ChildProfile(0, "name");
 
@@ -26,14 +28,15 @@ public class ProfileUnitTest{
         profile.Childs.Count.Should().Be(1);
     }
 
-    public static IEnumerable<object[]> ProfileFavouriteData(){
+    public static IEnumerable<object[]> ProfileFavouriteData()
+    {
         Profile profile = new Profile("ID", new User("LOGIN", "EMAIL", "PASSWORD"));
         var childProfile = new ChildProfile(0, "name");
 
-        yield return new object[]{profile.Scored};
-        yield return new object[]{profile.Watched};
-        yield return new object[]{profile.WillWatch};
+        yield return new object[] { profile.Scored };
+        yield return new object[] { profile.Watched };
+        yield return new object[] { profile.WillWatch };
     }
-    
+
 }
 

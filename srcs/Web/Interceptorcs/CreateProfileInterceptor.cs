@@ -6,8 +6,8 @@ namespace Web.GrpcInterceptors;
 
 public class CreateProfileMetricsInterceptor : Interceptor
 {
-    
-    ProfileMetrics _metrics;
+
+    readonly ProfileMetrics _metrics;
     public CreateProfileMetricsInterceptor(ProfileMetrics metrics)
     {
         _metrics = metrics;
@@ -20,7 +20,7 @@ public class CreateProfileMetricsInterceptor : Interceptor
     {
         try
         {
-            var returnRes =  await continuation(request, context);
+            var returnRes = await continuation(request, context);
             _metrics.IncCreateProfileSuccefulGrpc();
             return returnRes;
         }

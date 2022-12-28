@@ -19,22 +19,24 @@ namespace IntegrationTests;
 [Collection("WebContext")]
 public class ProfileWebTest
 {
-    class UserToSend{
-        public string Login {get; set; } = null!;
+    class UserToSend
+    {
+        public string Login { get; set; } = null!;
 
-        public string Email {get; set; } = null!;
+        public string Email { get; set; } = null!;
 
-        public string Password {get; set; } = null!;
+        public string Password { get; set; } = null!;
     }
 
     readonly WebFixture _webContext;
     GrpcFixture _grpcFixture;
-    public ProfileWebTest(WebFixture webContext, GrpcFixture grpcFixture){
+    public ProfileWebTest(WebFixture webContext, GrpcFixture grpcFixture)
+    {
         _webContext = webContext;
         _grpcFixture = grpcFixture;
     }
     const string url = "profile";
-    
+
     [Fact]
     public async Task CreateProfileGrpc()
     {
@@ -50,10 +52,12 @@ public class ProfileWebTest
         var profileData = User().Adapt<CreateProfileRequest>();
         var profileMetrics = _webContext.Services.GetRequiredService<ProfileMetrics>();
 
-        try{
+        try
+        {
             await _grpcFixture.GrpcClient.CreateProfileAsync(profileData);
-            
-        } catch{}
+
+        }
+        catch { }
 
 
         var succCounter = GetChildCounter("ChildProfileCreatedSucc", profileMetrics).Value;
@@ -68,41 +72,43 @@ public class ProfileWebTest
         var postResponseMessage = await _webContext.Client.PostAsJsonAsync(url, userToPost);
         string id = await GetUserId(postResponseMessage);
         var requestParams = $"?id={id}";
-        var responseMessage = await _webContext.Client.GetAsync(url+requestParams);
+        var responseMessage = await _webContext.Client.GetAsync(url + requestParams);
 
         responseMessage.IsSuccessStatusCode.Should().BeTrue();
     }
-    [Fact]   
+    [Fact]
     public async Task Post()
     {
         var userToPost = User();
-        
+
         var responseMessage = await _webContext.Client.PostAsJsonAsync(url, userToPost);
 
         responseMessage.IsSuccessStatusCode.Should().BeTrue();
     }
-    async Task<string> GetUserId (HttpResponseMessage response){ 
+    async Task<string> GetUserId(HttpResponseMessage response)
+    {
         var json = await response?.Content?.ReadAsStringAsync() ?? "{}";
         var jsobj = JObject.Parse(json);
         var res = jsobj["id"].ToString();
         return res;
     }
-    UserToSend User(){
-        var user = new UserToSend {};
-        
+    UserToSend User()
+    {
+        var user = new UserToSend { };
+
         user.Login = Path.GetRandomFileName();
         user.Email = Path.GetRandomFileName();
         user.Password = Path.GetRandomFileName();
 
         return user;
     }
-    Counter GetChildCounter (string fieldName, ProfileMetrics metrics)
+    Counter GetChildCounter(string fieldName, ProfileMetrics metrics)
     {
 
         var typeOfMetrics = typeof(ProfileMetrics);
 
-        var metricsField = typeOfMetrics.GetField(fieldName, 
-        BindingFlags.Instance | BindingFlags.NonPublic) 
+        var metricsField = typeOfMetrics.GetField(fieldName,
+        BindingFlags.Instance | BindingFlags.NonPublic)
         ?? throw new NullReferenceException("field doesn't found");
 
         var value = metricsField.GetValue(metrics) as Counter ?? throw new NullReferenceException("value doesn't type of Metrics");

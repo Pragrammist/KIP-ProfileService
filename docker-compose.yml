@@ -1,5 +1,34 @@
+version: "3.9" 
 services:
-  profile:
+  kip-profile:
+    depends_on:
+      - 'mongo-kip-profile'
+    environment:
+      — ASPNETCORE_ENVIRONMENT=Production
+      — LOGSTASH_URL=http://localhost:8080
+      — MONGODB_CONNECTION_STRING=mongodb://localhost:27017
+      — DB_NAME=kip_profile_db
+      — COLLECTION_NAME=profiles
+    container_name: "kip-profile"
     image: kip-profile
     ports:
       - 5000:80
+    networks:
+      - microservice_network
+    build:
+      context: .
+      dockerfile: Dockerfile
+      network: kip-profile
+
+  mongo-kip-profile:
+    restart: always
+    image: 'mongo-kip-profile'
+    ports:
+      - '27017:27017'
+    volumes:
+      - 'mongo:/db'
+    build:
+        context: .
+        dockerfile: Dockerfile
+        network: kip-profile
+      

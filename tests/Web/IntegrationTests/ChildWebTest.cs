@@ -16,16 +16,18 @@ namespace IntegrationTests;
 public class ChildProfileWebTest
 {
 
-    class UserToSend{
-        public string Login {get; set; } = null!;
-        public string Email {get; set; } = null!;
-        public string Password {get; set; } = null!;
+    class UserToSend
+    {
+        public string Login { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public string Password { get; set; } = null!;
     }
-    class ChildProfileToSend{
-        public string ProfileId {get; set;} =  null!;
-        public int Age {get; set;}
-        public string Name {get; set;} =  null!;
-        public int Gender {get; set;}
+    class ChildProfileToSend
+    {
+        public string ProfileId { get; set; } = null!;
+        public int Age { get; set; }
+        public string Name { get; set; } = null!;
+        public int Gender { get; set; }
     }
     readonly WebFixture _webContext;
     readonly string profileUrlPost = "profile";
@@ -38,8 +40,10 @@ public class ChildProfileWebTest
         user.Email = Path.GetRandomFileName();
         return user;
     }
-    async Task<ChildProfileToSend> CreateChild(){
-        var child = new ChildProfileToSend{
+    async Task<ChildProfileToSend> CreateChild()
+    {
+        var child = new ChildProfileToSend
+        {
             ProfileId = await CreateProfile(),
             Age = 12,
             Name = Path.GetRandomFileName(),
@@ -47,11 +51,12 @@ public class ChildProfileWebTest
         };
         return child;
     }
-    public ChildProfileWebTest(WebFixture webContext){
+    public ChildProfileWebTest(WebFixture webContext)
+    {
         _webContext = webContext;
     }
 
-    [Fact]   
+    [Fact]
     public async Task Post()
     {
         var child = await CreateChild();
@@ -70,9 +75,11 @@ public class ChildProfileWebTest
         responseMessage.IsSuccessStatusCode.Should().BeTrue();
     }
     [Fact]
-    public async Task ChildProfileMetricsTest(){
+    public async Task ChildProfileMetricsTest()
+    {
 
-        try { 
+        try
+        {
             await CreateChildProfile();
         }
         catch { }
@@ -84,15 +91,16 @@ public class ChildProfileWebTest
         Assert.True(counterFail > 0 || counterSucc > 0);
 
     }
-    async Task<string> CreateProfile (){ 
+    async Task<string> CreateProfile()
+    {
         var userToPost = FillRandmlyUserField();
         var postResponseMessage = await _webContext.Client.PostAsJsonAsync(profileUrlPost, userToPost);
 
         var json = await postResponseMessage?.Content?.ReadAsStringAsync();
         var jsobj = JObject.Parse(json);
-        var res  = jsobj["id"].ToString();
+        var res = jsobj["id"].ToString();
 
-        
+
         return res;
     }
     async Task<ChildProfileToSend> CreateChildProfile()
@@ -101,14 +109,14 @@ public class ChildProfileWebTest
         var responseMessage = await _webContext.Client.PostAsJsonAsync(url, child);
         return child;
     }
-    
-    Counter GetChildCounter (string fieldName, ChildProfileMetrics metrics)
+
+    Counter GetChildCounter(string fieldName, ChildProfileMetrics metrics)
     {
 
         var typeOfMetrics = typeof(ChildProfileMetrics);
 
-        var metricsField = typeOfMetrics.GetField(fieldName, 
-        BindingFlags.Instance | BindingFlags.NonPublic) 
+        var metricsField = typeOfMetrics.GetField(fieldName,
+        BindingFlags.Instance | BindingFlags.NonPublic)
         ?? throw new NullReferenceException("field doesn't found");
 
         var value = metricsField.GetValue(metrics) as Counter ?? throw new NullReferenceException("value doesn't type of Metrics");

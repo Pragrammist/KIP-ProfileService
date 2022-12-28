@@ -15,14 +15,15 @@ public class MongoDbTestBase : IDisposable
     public const string COLECTION_NAME = "profiles";
     public IMongoCollection<Profile> Repo { get; }
 
-    public MongoDbTestBase(){
+    public MongoDbTestBase()
+    {
         Client = new MongoClient("mongodb://localhost:27017");
         Db = Client.GetDatabase(DB_NAME);
         Build();
         Repo = Db.GetCollection<Profile>(COLECTION_NAME);
     }
 
-    public readonly InsertOneOptions _insOpt = new InsertOneOptions {};
+    public readonly InsertOneOptions _insOpt = new InsertOneOptions { };
 
     public readonly FilterDefinition<Profile> allFilter = Builders<Profile>.Filter.Empty;
 
@@ -30,15 +31,17 @@ public class MongoDbTestBase : IDisposable
     {
         Client.DropDatabase(DB_NAME);
     }
-    void Build(){
+    void Build()
+    {
         ProfileMongodbBuilder mongoBuilder = new ProfileMongodbBuilderImpl();
         mongoBuilder.Build();
     }
-    
+
 }
 
 [CollectionDefinition("MongoDb")]
-public class MongoDbTestCollectionBase : ICollectionFixture<MongoDbTestBase>{
+public class MongoDbTestCollectionBase : ICollectionFixture<MongoDbTestBase>
+{
 
 }
 

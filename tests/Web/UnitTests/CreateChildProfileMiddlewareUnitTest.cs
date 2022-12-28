@@ -18,7 +18,7 @@ public class CreateChildProfileMiddlewareUnitTest
     RequestDelegate RequestWithSuccess => (HttpContext c) => Task.CompletedTask;
 
     RequestDelegate RequestWithStatusCode400 => (HttpContext c) => Task.CompletedTask;
-    
+
     double ChildProfileCreatedSucc => GetChildCounter("ChildProfileCreatedSucc").Value;
 
     double ChildProfileCreatedFail => GetChildCounter("ChildProfileCreatedFail").Value;
@@ -26,14 +26,14 @@ public class CreateChildProfileMiddlewareUnitTest
     ChildProfileMetrics Metrics => new ChildProfileMetrics();
 
     CreateChildProfileMetricsMiddleware GetMiddlewareWithSuccessRequest => new CreateChildProfileMetricsMiddleware(RequestWithSuccess);
-    
+
     CreateChildProfileMetricsMiddleware GetMiddlewareWithExceptionRequest => new CreateChildProfileMetricsMiddleware(RequestWithException);
 
     CreateChildProfileMetricsMiddleware GetMiddlewareWithFailureRequest => new CreateChildProfileMetricsMiddleware(RequestWithStatusCode400);
 
     HttpContext ContextWithNotCreaingChildProfile => ContextWith(200, "/somePath");
 
-    HttpContext ContextWithCreaingChildProfile200=> ContextWith(200, "/child");
+    HttpContext ContextWithCreaingChildProfile200 => ContextWith(200, "/child");
 
     HttpContext ContextWithCreaingChildProfile400 => ContextWith(400, "/child");
 
@@ -46,7 +46,7 @@ public class CreateChildProfileMiddlewareUnitTest
     {
         var beforeSucc = ChildProfileCreatedSucc;
         var beforeFail = ChildProfileCreatedFail;
-        
+
         await GetMiddlewareWithSuccessRequest.Invoke(ContextWithNotCreaingChildProfile, Metrics);
 
         ChildProfileCreatedSucc.Should().Be(beforeSucc);
@@ -72,7 +72,7 @@ public class CreateChildProfileMiddlewareUnitTest
         var beforeFail = ChildProfileCreatedFail;
 
         await GetMiddlewareWithSuccessRequest.Invoke(ContextWithCreaingChildProfile400, Metrics);
-        
+
         ChildProfileCreatedSucc.Should().Be(beforeSucc);
         ChildProfileCreatedFail.Should().BeGreaterThan(beforeFail);
     }
@@ -84,11 +84,10 @@ public class CreateChildProfileMiddlewareUnitTest
         var beforeFail = ChildProfileCreatedFail;
 
         await GetMiddlewareWithSuccessRequest.Invoke(ContextWithCreaingChildProfile200, Metrics);
-        
+
         ChildProfileCreatedSucc.Should().BeGreaterThan(beforeSucc);
         ChildProfileCreatedFail.Should().Be(beforeFail);
     }
-    
 
 
 
@@ -96,14 +95,15 @@ public class CreateChildProfileMiddlewareUnitTest
 
 
 
-    
 
-    Counter GetChildCounter (string fieldName)
+
+
+    Counter GetChildCounter(string fieldName)
     {
         var typeOfMetrics = typeof(ChildProfileMetrics);
 
-        var metricsField = typeOfMetrics.GetField(fieldName, 
-        BindingFlags.Instance | BindingFlags.NonPublic) 
+        var metricsField = typeOfMetrics.GetField(fieldName,
+        BindingFlags.Instance | BindingFlags.NonPublic)
         ?? throw new NullReferenceException("field doesn't found");
 
         var value = metricsField.GetValue(Metrics) as Counter ?? throw new NullReferenceException("value doesn't type of Metrics");
@@ -111,12 +111,13 @@ public class CreateChildProfileMiddlewareUnitTest
         return value;
     }
 
-    HttpContext ContextWith(int statusCode, string path, string method = "POST"){
+    HttpContext ContextWith(int statusCode, string path, string method = "POST")
+    {
         var mock = new Mock<HttpContext>();
         mock.SetupGet(http => http.Request.Path).Returns(path);
         mock.SetupGet(http => http.Request.Method).Returns(method);
         mock.SetupGet(http => http.Response.StatusCode).Returns(statusCode);
         return mock.Object;
     }
-    
+
 }

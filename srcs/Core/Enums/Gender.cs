@@ -1,7 +1,8 @@
 namespace ProfileService.Core;
 
-public enum Gender {
+public enum Gender
+{
     MALE = default,
     FEMALE = 1
-    
+
 }

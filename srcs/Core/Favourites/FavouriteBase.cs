@@ -6,13 +6,15 @@ using System.Collections;
 namespace ProfileService.Core;
 
 
-public abstract class FavouriteBase : IList<string>, IEnumerable<string>{
+public abstract class FavouriteBase : IList<string>, IEnumerable<string>
+{
     protected readonly IList<string> _films = null!;
 
-    
-    
+
+
     protected readonly string _profileId = null!;
-    protected FavouriteBase(){
+    protected FavouriteBase()
+    {
         _films = new List<string>();
     }
     protected FavouriteBase(IList<string> films)
@@ -25,7 +27,7 @@ public abstract class FavouriteBase : IList<string>, IEnumerable<string>{
 
     public bool IsReadOnly => false;
 
-    
+
     private void AddFilmValidation(string filmId)
     {
         if (_films.FirstOrDefault(t => t == filmId) != null)
@@ -54,7 +56,7 @@ public abstract class FavouriteBase : IList<string>, IEnumerable<string>{
 
 
     public int IndexOf(string filmId) => _films.IndexOf(filmId);
-    
+
 
     public void Insert(int index, string filmId)
     {

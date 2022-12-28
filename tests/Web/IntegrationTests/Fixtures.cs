@@ -17,7 +17,7 @@ using Web.Services;
 namespace IntegrationTests;
 
 
-public class WebFixture : WebApplicationFactory<Program> , IDisposable
+public class WebFixture : WebApplicationFactory<Program>, IDisposable
 {
     private bool disposed = false;
     GrpcChannel grpcChannel;
@@ -29,16 +29,18 @@ public class WebFixture : WebApplicationFactory<Program> , IDisposable
 
     public HttpClient Client { get; }
 
-    public WebFixture(){
+    public WebFixture()
+    {
         SetEnvironmentVariable();
-        
+
 
         Client = CreateClient();
         var webConf = Services.GetRequiredService<IConfiguration>();
         grpcChannel = GrpcChannel.ForAddress(CLIENT_CONNECTION);
         GrpcClient = new Profile.ProfileClient(grpcChannel);
     }
-    private void SetEnvironmentVariable(){
+    private void SetEnvironmentVariable()
+    {
         Environment.SetEnvironmentVariable("DB_NAME", DB_NAME);
         Environment.SetEnvironmentVariable("ASPNETCORE_URLS", CLIENT_CONNECTION);
     }
@@ -47,7 +49,7 @@ public class WebFixture : WebApplicationFactory<Program> , IDisposable
         if (disposed) return;
         if (disposing)
         {
-            var mongoDb = Services.GetRequiredService<IMongoClient>();   
+            var mongoDb = Services.GetRequiredService<IMongoClient>();
             mongoDb.DropDatabase(DB_NAME);
             grpcChannel.Dispose();
         }
@@ -56,9 +58,9 @@ public class WebFixture : WebApplicationFactory<Program> , IDisposable
     }
 
 
-    
 
-    
+
+
 }
 
 [CollectionDefinition("WebContext")]
@@ -72,12 +74,13 @@ public class GrpcFixture : IDisposable
 {
     const string CLIENT_CONNECTION = "https://localhost:7010";
     GrpcChannel grpcChannel = null!;
-    WebApplication app= null!;
-    WebApplicationBuilder builder= null!;
+    WebApplication app = null!;
+    WebApplicationBuilder builder = null!;
     const string TEST_DB = "profile_test_db2";
-    public Profile.ProfileClient GrpcClient { get; private set;} = null!;
+    public Profile.ProfileClient GrpcClient { get; private set; } = null!;
     Task appTask;
-    public GrpcFixture(){
+    public GrpcFixture()
+    {
         appTask = AppBuildAndCreateGrpcChannel();
         grpcChannel = GrpcChannel.ForAddress(CLIENT_CONNECTION);
 
@@ -87,7 +90,7 @@ public class GrpcFixture : IDisposable
 
     public void Dispose()
     {
-        if(app is not null)
+        if (app is not null)
         {
             var stopTask = app.StopAsync();
             stopTask.Wait();
@@ -98,12 +101,13 @@ public class GrpcFixture : IDisposable
 
     }
     async Task AppBuildAndCreateGrpcChannel()
-    {    
+    {
         Environment.SetEnvironmentVariable("DB_NAME", TEST_DB);
         Environment.SetEnvironmentVariable("ASPNETCORE_URLS", CLIENT_CONNECTION);
-        builder = WebApplication.CreateBuilder(new string[]{""});
+        builder = WebApplication.CreateBuilder(new string[] { "" });
         builder.WebHost.UseUrls(CLIENT_CONNECTION);
-        builder.Services.AddGrpc(opt => {
+        builder.Services.AddGrpc(opt =>
+        {
             opt.Interceptors.Add<CreateProfileMetricsInterceptor>();
         });
 

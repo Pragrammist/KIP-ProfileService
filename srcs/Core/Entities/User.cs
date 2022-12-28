@@ -6,15 +6,17 @@ public class User
 {
 
     private User() { }
-    void Constructore(string login, string email, string password){
+    void Constructore(string login, string email, string password)
+    {
         Login = login;
         Email = email;
         Password = password;
     }
-    public User(string login, string email, string password){
+    public User(string login, string email, string password)
+    {
         Constructore(login, email, password);
     }
-   
+
     public string Login { get; set; } = null!;
     public string Email { get; set; } = null!;
     public string Password { get; set; } = null!;

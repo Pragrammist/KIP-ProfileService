@@ -21,14 +21,16 @@ public class ProfileMongodbBuilderImpl : ProfileMongodbBuilder
         {
             BsonMemberMap SetStringId<T>(BsonClassMap<T> map) => map.IdMemberMap.SetSerializer(new StringSerializer(BsonType.ObjectId)).SetIdGenerator(StringObjectIdGenerator.Instance);
 
-            BsonClassMap.RegisterClassMap<Profile>(map => {
+            BsonClassMap.RegisterClassMap<Profile>(map =>
+            {
                 map.AutoMap();
                 SetStringId(map);
-                
+
             });
         }
-        catch(ArgumentException ex){
-            if(!ex.Message.ToLower().Contains("an item with the same key has already been added"))
+        catch (ArgumentException ex)
+        {
+            if (!ex.Message.ToLower().Contains("an item with the same key has already been added"))
                 throw ex;
         }
     }

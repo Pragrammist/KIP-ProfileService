@@ -21,12 +21,12 @@ public class ConnectionMongoTest
         var user = new User("lgoin", "email", "password228hash");
         var profile = new Profile(user);
 
-        
+
         await _dbFixture.Repo.InsertOneAsync(profile);
 
 
         var count = await _dbFixture.Repo.CountDocumentsAsync(_dbFixture.allFilter);
         count.Should().BeGreaterThan(firstCount);
     }
-    
+
 }

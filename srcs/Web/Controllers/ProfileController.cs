@@ -13,8 +13,9 @@ namespace Web.Controllers;
 [Produces("application/json")]
 public class ProfileController : ControllerBase
 {
-    ProfileInteractor _profile;
-    public ProfileController(ProfileInteractor profile){
+    readonly ProfileInteractor _profile;
+    public ProfileController(ProfileInteractor profile)
+    {
         _profile = profile;
     }
 
@@ -38,14 +39,16 @@ public class ProfileController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Post(CreateProfileDto input, CancellationToken cancellation)
     {
-        try{
-            var profile =  await _profile.Create(input, cancellation);
+        try
+        {
+            var profile = await _profile.Create(input, cancellation);
             return new ObjectResult(profile);
         }
-        catch(UserAlreadyExistsException){
+        catch (UserAlreadyExistsException)
+        {
             return BadRequest();
         }
-        
+
     }
 
 
@@ -66,8 +69,8 @@ public class ProfileController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> WillWatchPost(string profileId, string filmID, CancellationToken cancellation)
     {
-        var isSuccess  = await _profile.AddWillWatch(profileId, filmID, cancellation);
-        if(isSuccess)
+        var isSuccess = await _profile.AddWillWatch(profileId, filmID, cancellation);
+        if (isSuccess)
             return Ok();
         else
             return BadRequest();
@@ -77,8 +80,8 @@ public class ProfileController : ControllerBase
     [HttpDelete]
     public async Task<IActionResult> WillWatchDelete(string profileId, string filmID, CancellationToken cancellation)
     {
-        var isSuccess  = await _profile.DeleteWillWatch(profileId, filmID, cancellation);
-        if(isSuccess)
+        var isSuccess = await _profile.DeleteWillWatch(profileId, filmID, cancellation);
+        if (isSuccess)
             return Ok();
         else
             return BadRequest();
@@ -88,8 +91,8 @@ public class ProfileController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> WatchedPost(string profileId, string filmID, CancellationToken cancellation)
     {
-        var isSuccess  = await _profile.AddWatchded(profileId, filmID, cancellation);
-        if(isSuccess)
+        var isSuccess = await _profile.AddWatchded(profileId, filmID, cancellation);
+        if (isSuccess)
             return Ok();
         else
             return BadRequest();
@@ -99,19 +102,19 @@ public class ProfileController : ControllerBase
     [HttpDelete]
     public async Task<IActionResult> WatchedDelete(string profileId, string filmID, CancellationToken cancellation)
     {
-        var isSuccess  = await _profile.DeleteWatchded(profileId, filmID, cancellation);
-        if(isSuccess)
+        var isSuccess = await _profile.DeleteWatchded(profileId, filmID, cancellation);
+        if (isSuccess)
             return Ok();
         else
             return BadRequest();
     }
 
-     [Route("~/scored/{profileId}/{filmID}")]
+    [Route("~/scored/{profileId}/{filmID}")]
     [HttpPost]
     public async Task<IActionResult> ScoredPost(string profileId, string filmID, CancellationToken cancellation)
     {
-        var isSuccess  = await _profile.AddScored(profileId, filmID, cancellation);
-        if(isSuccess)
+        var isSuccess = await _profile.AddScored(profileId, filmID, cancellation);
+        if (isSuccess)
             return Ok();
         else
             return BadRequest();
@@ -121,8 +124,8 @@ public class ProfileController : ControllerBase
     [HttpDelete]
     public async Task<IActionResult> ScoredDelete(string profileId, string filmID, CancellationToken cancellation)
     {
-        var isSuccess  = await _profile.DeleteScored(profileId, filmID, cancellation);
-        if(isSuccess)
+        var isSuccess = await _profile.DeleteScored(profileId, filmID, cancellation);
+        if (isSuccess)
             return Ok();
         else
             return BadRequest();
