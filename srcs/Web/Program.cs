@@ -9,7 +9,7 @@ using Web.GrpcInterceptors;
 using Prometheus;
 using Serilog.Events;
 using Web.YmlCustomConfiguration;
-
+using System;
 public class Program
 {
     public static void BuildServicesNotFromWeb(IServiceCollection services, IConfiguration configuration)
@@ -31,6 +31,9 @@ public class Program
         }
         catch (Exception ex)
         {
+            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.InnerException?.Message);
+            Console.WriteLine("CONFIG is " + Environment.GetEnvironmentVariable("CONFIG"));
             Log.Fatal(ex, "Application terminated unexpectedly");
         }
         finally
@@ -43,8 +46,9 @@ public class Program
     {
         MapsterBuilder.ConfigureMapster();
         var builder = WebApplication.CreateBuilder(args);
-
         builder.Configuration.AddValueFromYmlVar();
+
+        
 
         var logstashUrl = builder.Configuration["LOGSTASH_URL"] ?? "http://localhost:8080";
         Log.Logger = new LoggerConfiguration()
@@ -60,10 +64,10 @@ public class Program
         {
             opt.Interceptors.Add<CreateProfileMetricsInterceptor>();
         });
-        builder.Services.AddGrpcReflection();
 
         builder.Services.AddSingleton<ProfileMetrics>();
         builder.Services.AddSingleton<ChildProfileMetrics>();
+
 
         BuildServicesNotFromWeb(builder.Services, builder.Configuration);
         builder.Services.AddEndpointsApiExplorer();
@@ -91,13 +95,9 @@ public class Program
             options.RoutePrefix = string.Empty;
         });
         app.UseMiddleware<CreateChildProfileMetricsMiddleware>();
-        app.UseAuthorization();
+        app.MapMetrics();
+        app.MapControllers();
         app.MapGrpcService<ProfileGrpcService>();
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-            endpoints.MapMetrics();
-        });
         app.Run();
     }
 }
